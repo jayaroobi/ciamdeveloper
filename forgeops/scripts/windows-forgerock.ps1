@@ -1,10 +1,16 @@
 # Windows — launch ForgeRock (original ForgeOps minikube plan)
-# Run in PowerShell as Administrator (recommended for Multipass/Hyper-V)
 #
 # Usage:
 #   cd C:\ciam
+#   git pull origin cursor/forgeops-ciam-career-lab-fe67
 #   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+#   .\forgeops\scripts\diagnose-multipass-windows.ps1   # if launch fails
 #   .\forgeops\scripts\windows-forgerock.ps1
+#
+# Notes:
+#   - Mounts are NOT used (disabled on Windows Multipass) — repo cloned via git inside VM
+#   - Hyper-V driver: run PowerShell as Administrator
+#   - VirtualBox driver: use NORMAL (non-Admin) PowerShell
 
 $ErrorActionPreference = "Continue"
 $VM_NAME = "forgeops-lab"
@@ -47,22 +53,41 @@ if ($state -eq "Running") {
     multipass start $VM_NAME
 } else {
     Write-Host ("Creating VM {0} ({1} CPUs, {2} RAM)..." -f $VM_NAME, $VM_CPUS, $VM_MEM) -ForegroundColor Yellow
-    Write-Host "Tip: Run PowerShell as Administrator if launch fails." -ForegroundColor DarkYellow
+
+    $driver = ""
+    try { $driver = (multipass get local.driver 2>$null).Trim() } catch {}
+    if ($driver -eq "virtualbox") {
+        Write-Host "Driver=virtualbox — use normal (non-Admin) PowerShell." -ForegroundColor DarkYellow
+    } else {
+        Write-Host "Tip: Hyper-V driver needs Administrator PowerShell." -ForegroundColor DarkYellow
+    }
+
     $launchOut = multipass launch --name $VM_NAME --cpus $VM_CPUS --memory $VM_MEM --disk $VM_DISK 2>&1
     if ($LASTEXITCODE -ne 0) {
         Write-Host $launchOut -ForegroundColor Red
         Write-Host ""
-        Write-Host "=== VM LAUNCH FAILED - try these fixes ===" -ForegroundColor Red
-        Write-Host "1. Close PowerShell, open NEW PowerShell as Administrator"
-        Write-Host "2. Enable virtualization in BIOS (Intel VT-x / AMD-V)"
-        Write-Host "3. Windows Features: enable Hyper-V OR Virtual Machine Platform"
-        Write-Host "4. Check driver: multipass get local.driver"
-        Write-Host "   Try: multipass set local.driver=hyperv"
-        Write-Host "   Or:  multipass set local.driver=virtualbox  (VirtualBox must be in PATH)"
-        Write-Host "5. Clean retry: multipass delete --purge $VM_NAME"
-        Write-Host "6. Reboot Windows, then re-run this script"
+        Write-Host "=== VM LAUNCH FAILED ===" -ForegroundColor Red
         Write-Host ""
-        Write-Host "Manual deploy inside VM after launch works:" -ForegroundColor Yellow
+        Write-Host "Common cause: 'Could not generate a new UUID' = Multipass cannot find its hypervisor."
+        Write-Host ""
+        Write-Host "Run diagnostics first:" -ForegroundColor Yellow
+        Write-Host "  .\forgeops\scripts\diagnose-multipass-windows.ps1"
+        Write-Host ""
+        Write-Host "Quick fixes:" -ForegroundColor Yellow
+        Write-Host "  A) Hyper-V (Windows Pro/Enterprise):"
+        Write-Host "     - Admin PowerShell: Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All"
+        Write-Host "     - multipass set local.driver=hyperv"
+        Write-Host "  B) VirtualBox (Windows Home or if Hyper-V fails):"
+        Write-Host "     - Install VirtualBox, add C:\Program Files\Oracle\VirtualBox to SYSTEM PATH"
+        Write-Host "     - Reboot, then NORMAL (non-Admin) PowerShell:"
+        Write-Host "     - multipass set local.driver=virtualbox"
+        Write-Host "  C) Clean retry: multipass delete --purge $VM_NAME"
+        Write-Host "  D) Reboot Windows after any driver/PATH change"
+        Write-Host ""
+        Write-Host "If you saw 'Mounts are disabled' — update repo (mount no longer used):" -ForegroundColor Yellow
+        Write-Host "  git pull origin $GIT_BRANCH"
+        Write-Host ""
+        Write-Host "Manual deploy after VM launch works:" -ForegroundColor Yellow
         Write-Host "  multipass shell $VM_NAME"
         Write-Host "  git clone $REPO_URL $VM_REPO && cd $VM_REPO && git checkout $GIT_BRANCH"
         Write-Host "  chmod +x forgeops/scripts/*.sh && ./forgeops/scripts/setup-forgerock.sh"

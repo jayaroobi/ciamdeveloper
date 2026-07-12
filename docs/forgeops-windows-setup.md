@@ -122,6 +122,35 @@ multipass start forgeops-lab     # start VM
 multipass delete forgeops-lab    # delete VM
 ```
 
+### Troubleshooting — launch / UUID errors
+
+If you see:
+
+```text
+launch failed: Could not generate a new UUID: Process failed to start: The system cannot find the file specified.
+```
+
+Multipass cannot find its hypervisor backend. Run:
+
+```powershell
+cd C:\ciam
+git pull origin cursor/forgeops-ciam-career-lab-fe67
+.\forgeops\scripts\diagnose-multipass-windows.ps1
+```
+
+| Driver | When to use | Shell |
+|--------|-------------|-------|
+| `hyperv` | Windows Pro/Enterprise | Administrator PowerShell |
+| `virtualbox` | Windows Home, or Hyper-V issues | Normal PowerShell |
+
+**VirtualBox fix:** add `C:\Program Files\Oracle\VirtualBox` to **System PATH**, reboot, then `multipass set local.driver=virtualbox`.
+
+**Hyper-V fix:** enable Hyper-V or Virtual Machine Platform in Windows Optional Features, reboot, Admin PowerShell, `multipass set local.driver=hyperv`.
+
+Do **not** use both Hyper-V and VirtualBox at the same time.
+
+If you also see `Mounts are disabled` — your repo is outdated; `git pull` gets the script that clones via git inside the VM (no mount).
+
 ---
 
 ## Option B — WSL2 + Docker Desktop

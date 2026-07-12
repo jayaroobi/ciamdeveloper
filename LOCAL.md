@@ -18,29 +18,57 @@ Creates:
 
 ## Deploy ForgeRock
 
-**Run PowerShell as Administrator** (required for Multipass VM launch on many Windows PCs).
-
 ```powershell
 cd C:\ciam
+git pull origin cursor/forgeops-ciam-career-lab-fe67
 .\forgeops\scripts\windows-forgerock.ps1
 ```
 
 > Mounts are **not used** — repo is cloned via git inside the VM (Windows disables Multipass mounts by default).
 
-### If VM launch fails (UUID error)
+### If you see two errors together
+
+| Error | Meaning |
+|-------|---------|
+| `Mounts are disabled on this installation of Multipass` | Old script — run `git pull` (mount removed) |
+| `Could not generate a new UUID: Process failed to start` | Multipass cannot find Hyper-V or VirtualBox |
+
+### Fix UUID / launch failure
+
+**Step 1 — pull latest + diagnose**
 
 ```powershell
-# Run as Administrator
-multipass get local.driver
-multipass set local.driver=hyperv
-# or if using VirtualBox:
-multipass set local.driver=virtualbox
-
-multipass delete --purge forgeops-lab
-# Reboot Windows, then re-run windows-forgerock.ps1
+cd C:\ciam
+git pull origin cursor/forgeops-ciam-career-lab-fe67
+.\forgeops\scripts\diagnose-multipass-windows.ps1
 ```
 
-Enable in Windows: **Settings → System → Optional features → Hyper-V** or **Virtual Machine Platform**.
+**Step 2 — pick ONE hypervisor**
+
+**Option A — Hyper-V** (Windows Pro/Enterprise, Admin PowerShell):
+
+```powershell
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+multipass set local.driver=hyperv
+multipass delete --purge forgeops-lab
+# Reboot Windows
+.\forgeops\scripts\windows-forgerock.ps1
+```
+
+**Option B — VirtualBox** (Windows Home, or if Hyper-V fails):
+
+1. Install VirtualBox: https://www.virtualbox.org/
+2. Add `C:\Program Files\Oracle\VirtualBox` to **System** PATH (not User PATH only)
+3. Reboot Windows
+4. Open **normal** (non-Admin) PowerShell:
+
+```powershell
+multipass set local.driver=virtualbox
+multipass delete --purge forgeops-lab
+.\forgeops\scripts\windows-forgerock.ps1
+```
+
+Enable virtualization in BIOS (Intel VT-x / AMD-V) if both options fail.
 
 Second window when prompted:
 
