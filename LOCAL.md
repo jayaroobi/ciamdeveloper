@@ -18,10 +18,29 @@ Creates:
 
 ## Deploy ForgeRock
 
+**Run PowerShell as Administrator** (required for Multipass VM launch on many Windows PCs).
+
 ```powershell
 cd C:\ciam
 .\forgeops\scripts\windows-forgerock.ps1
 ```
+
+> Mounts are **not used** — repo is cloned via git inside the VM (Windows disables Multipass mounts by default).
+
+### If VM launch fails (UUID error)
+
+```powershell
+# Run as Administrator
+multipass get local.driver
+multipass set local.driver=hyperv
+# or if using VirtualBox:
+multipass set local.driver=virtualbox
+
+multipass delete --purge forgeops-lab
+# Reboot Windows, then re-run windows-forgerock.ps1
+```
+
+Enable in Windows: **Settings → System → Optional features → Hyper-V** or **Virtual Machine Platform**.
 
 Second window when prompted:
 
