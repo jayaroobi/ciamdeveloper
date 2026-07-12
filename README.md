@@ -68,6 +68,8 @@ Type `/forgeops-ciam-lab` in Agent chat or ask: *"What is today's 30-minute lab?
 
 PostgreSQL guide: [docs/postgresql-lab-setup.md](docs/postgresql-lab-setup.md)
 
+**Windows users:** ForgeOps cannot run inside Cursor's Docker workspace — use [docs/forgeops-windows-setup.md](docs/forgeops-windows-setup.md) (Multipass VM or WSL2).
+
 ## License
 
 Lab scripts and apps: use freely. ForgeOps/Ping Docker images require [Ping license terms](https://docs.pingidentity.com/forgeops/2025.2/start/start-here.html).
