@@ -48,23 +48,23 @@ metadata:
 - Learning priority: **SSO / SAML / AM** (hands-on), then IDM and non-human identities (NHI)
 - Secondary skill: Amazon Bedrock (tie to NHI and automation use cases)
 
-## System specs (your local — refer before suggesting deploy commands)
+## System specs (your local — snapshot 2026-07-12T09:04:59+00:00)
 
 | Property | Value |
 |----------|-------|
 | **Physical host** | Windows |
 | **Dev environment** | Cursor cloud workspace (Docker container — NOT bare metal) |
-| **Workspace OS** | Ubuntu 24.04.4 LTS (Noble), kernel 6.12.94+ |
-| **CPU** | 4 cores — Intel Xeon, x86_64 |
-| **RAM** | 15 GiB total, ~14 GiB available |
-| **Swap** | None |
-| **Disk** | 252 GiB total, ~220 GiB free |
-| **Virtualization** | `docker` (`systemd-detect-virt`) |
+| **Workspace OS** | Ubuntu 24.04.4 LTS, kernel 6.12.94+ |
+| **CPU** | 4 cores — Intel(R) Xeon(R) Processor, x86_64 |
+| **RAM** | 15 GiB total, 14 GiB available |
+| **Swap** | 0B (none) |
+| **Disk** | 252 GiB total, 220 GiB free |
+| **Virtualization** | `docker` |
 | **cgroup.type** | `domain threaded` |
 | **cgroup.subtree_control** | `cpuset cpu pids` — **memory NOT delegated** |
 | **Docker** | 29.6.1, storage driver `vfs` |
-| **Node.js** | v22.14.0 |
-| **Python** | 3.12.3 |
+| **Node.js / Python** | v22.14.0 / 3.12.3 |
+| **ForgeOps in workspace** | **false** — use Multipass VM or WSL2 on Windows |
 
 ### Deployment constraints (critical — do not ignore)
 
