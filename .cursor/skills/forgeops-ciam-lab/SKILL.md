@@ -43,6 +43,9 @@ metadata:
 | `docs/career-roadmap-60l-remote.md` | Job search, resume, and interview prep |
 | `docs/saml-lab-am-as-idp.md` | AM as SAML IdP + sample SP app |
 | `docs/nhi-lab-guide.md` | Non-human identity patterns with IDM/AM |
+| `docs/postgresql-lab-setup.md` | Separate PostgreSQL app database |
+| `infra/postgresql/` | Docker Compose PostgreSQL + schema |
+| `forgeops/scripts/start-postgresql.sh` | Start PostgreSQL |
 | `forgeops/scripts/deploy-full-stack.sh` | One-shot AM + IDM + DS deploy |
 | `forgeops/scripts/verify-stack.sh` | Check all platform pods |
 | `forgeops/scripts/deploy-ping-gateway.sh` | Optional PingGateway (IG) |
@@ -60,7 +63,7 @@ Official guides:
 
 **Default stack (identity-platform chart):** AM, IDM, PingDS-idrepo, PingDS-cts, UIs.  
 **PingGateway:** optional — not in default deploy. Use `deploy-ping-gateway.sh`.  
-**Database:** PingDS (LDAP), not RDBMS.
+**Database:** PingDS (LDAP) = identity store. **PostgreSQL** (optional, `infra/postgresql/`) = separate app database — do not confuse the two.
 
 1. Clone `https://github.com/ForgeRock/forgeops` and checkout tag `2026.2.1`
 2. Install Docker, minikube, kubectl, helm, kubens, python3

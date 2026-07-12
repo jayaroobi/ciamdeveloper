@@ -54,12 +54,15 @@ Type `/forgeops-ciam-lab` in Agent chat or ask: *"What is today's 30-minute lab?
 
 ## Stack components
 
-| Component | Default deploy? |
-|-----------|-----------------|
-| PingAM | Yes |
-| PingIDM | Yes |
-| PingDS (idrepo + cts) | Yes — this is your directory DB |
-| PingGateway | No — optional via `deploy-ping-gateway.sh` |
+| Component | Default deploy? | Notes |
+|-----------|-----------------|-------|
+| PingAM | Yes | SSO, SAML, OAuth2 |
+| PingIDM | Yes | Provisioning |
+| PingDS (idrepo + cts) | Yes | Identity directory (LDAP) |
+| PostgreSQL | Optional | Separate app DB — `infra/postgresql/` |
+| PingGateway | Optional | `deploy-ping-gateway.sh` |
+
+PostgreSQL guide: [docs/postgresql-lab-setup.md](docs/postgresql-lab-setup.md)
 
 ## License
 

@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const { SAML } = require('@node-saml/node-saml');
+const { recordSamlLogin } = require('./db');
 
 const PORT = process.env.PORT || 3000;
 const entityId = process.env.SAML_ENTITY_ID || 'urn:ciam-lab:saml-sp';
@@ -107,6 +108,12 @@ app.post('/saml/acs', async (req, res) => {
       attributes: profile.attributes || {},
       sessionIndex: profile.sessionIndex,
     };
+    recordSamlLogin({
+      nameID: profile.nameID,
+      email: profile.attributes?.email || profile.attributes?.mail,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+    }).catch((err) => console.warn('PostgreSQL audit skip:', err.message));
     res.redirect('/');
   } catch (err) {
     res.status(401).send(`ACS validation failed: ${err.message}`);

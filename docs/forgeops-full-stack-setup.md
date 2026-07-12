@@ -20,7 +20,8 @@ The `identity-platform` Helm chart deploys the **Ping Advanced Identity Software
 | **End-user UI** | deployment | Self-service at `/enduser` |
 | **cert-manager, ingress-nginx** | prereqs | TLS + routing (installed by `./forgeops prereqs`) |
 
-> **Database note:** ForgeOps uses **PingDS** (LDAP directory), not PostgreSQL/MySQL. `ds-idrepo` is your identity database.
+> **Database note:** ForgeOps uses **PingDS** (LDAP directory) for identity — not PostgreSQL.  
+> For a **separate PostgreSQL** app database (audit logs, app data), see [postgresql-lab-setup.md](postgresql-lab-setup.md).
 
 > **PingGateway (IG):** **Not deployed by default.** The [ForgeOps README](https://github.com/ForgeRock/forgeops/blob/main/README.md) states IG is optional. See [Optional: deploy PingGateway](#optional-deploy-pinggateway) below.
 
@@ -37,6 +38,17 @@ From the official [Start here](https://docs.pingidentity.com/forgeops/2025.2/sta
 | Disk | 40 GB free |
 
 Run on your **local machine in Sohar** (laptop/workstation with Docker). This cloud VM cannot run minikube due to nested Docker overlay limits.
+
+## Optional: PostgreSQL (application database)
+
+Separate from PingDS — for app data and SSO audit logs:
+
+```bash
+./forgeops/scripts/start-postgresql.sh
+./forgeops/scripts/verify-postgresql.sh
+```
+
+Guide: [postgresql-lab-setup.md](postgresql-lab-setup.md)
 
 ## One-command setup (Ubuntu / Linux)
 

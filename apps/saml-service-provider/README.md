@@ -26,4 +26,13 @@ See [docs/saml-lab-am-as-idp.md](../../docs/saml-lab-am-as-idp.md).
 |------|---------|
 | `metadata/sp-metadata.xml` | Give to AM when creating remote SP |
 | `metadata/idp-metadata.xml` | Export from AM (you create this) |
-| `server.js` | SP login + ACS handler |
+After SAML login, check PostgreSQL audit (if `DATABASE_URL` set):
+
+```sql
+SELECT * FROM login_audit ORDER BY logged_in_at DESC LIMIT 10;
+```
+
+## PostgreSQL (optional)
+
+Start lab database: `../../forgeops/scripts/start-postgresql.sh`  
+Guide: [docs/postgresql-lab-setup.md](../../docs/postgresql-lab-setup.md)
