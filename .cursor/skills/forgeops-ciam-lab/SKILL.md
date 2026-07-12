@@ -12,6 +12,27 @@ metadata:
   forgeops_start: "https://docs.pingidentity.com/forgeops/2025.2/start/start-here.html"
   forgeops_repo: "https://github.com/ForgeRock/forgeops"
   forgeops_tag: "2026.2.1"
+  # System specs (captured 2026-07-12 — re-run forgeops/scripts/collect-system-spec.sh to refresh)
+  physical_host_os: "Windows"
+  dev_environment: "Cursor cloud workspace (Docker container)"
+  workspace_os: "Ubuntu 24.04.4 LTS"
+  workspace_kernel: "6.12.94+"
+  cpu_cores: "4"
+  cpu_model: "Intel Xeon"
+  ram_total_gib: "15"
+  ram_available_gib: "14"
+  swap: "none"
+  disk_total_gib: "252"
+  disk_free_gib: "220"
+  virtualization: "docker"
+  cgroup_type: "domain threaded"
+  cgroup_memory_delegated: "false"
+  docker_version: "29.6.1"
+  docker_storage_driver: "vfs"
+  node_version: "v22.14.0"
+  python_version: "3.12.3"
+  forgeops_runnable_in_workspace: "false"
+  forgeops_deploy_target: "Windows Multipass VM or WSL2 (see docs/forgeops-windows-setup.md)"
 ---
 
 # ForgeOps CIAM Career Lab
@@ -24,6 +45,36 @@ metadata:
 - Daily time budget: **30 minutes** — every task must fit one focused session
 - Learning priority: **SSO / SAML / AM** (hands-on), then IDM and non-human identities (NHI)
 - Secondary skill: Amazon Bedrock (tie to NHI and automation use cases)
+
+## System specs (your local — refer before suggesting deploy commands)
+
+| Property | Value |
+|----------|-------|
+| **Physical host** | Windows |
+| **Dev environment** | Cursor cloud workspace (Docker container — NOT bare metal) |
+| **Workspace OS** | Ubuntu 24.04.4 LTS (Noble), kernel 6.12.94+ |
+| **CPU** | 4 cores — Intel Xeon, x86_64 |
+| **RAM** | 15 GiB total, ~14 GiB available |
+| **Swap** | None |
+| **Disk** | 252 GiB total, ~220 GiB free |
+| **Virtualization** | `docker` (`systemd-detect-virt`) |
+| **cgroup.type** | `domain threaded` |
+| **cgroup.subtree_control** | `cpuset cpu pids` — **memory NOT delegated** |
+| **Docker** | 29.6.1, storage driver `vfs` |
+| **Node.js** | v22.14.0 |
+| **Python** | 3.12.3 |
+
+### Deployment constraints (critical — do not ignore)
+
+- **ForgeOps / minikube CANNOT run inside the Cursor workspace** due to `domain threaded` cgroup — memory limits blocked.
+- **RAM is sufficient** (14 GiB free) — the blocker is cgroup, not hardware.
+- **What works in Cursor workspace:** PostgreSQL (`start-postgresql.sh`), SAML SP app, docs, blog, code editing.
+- **What needs Windows host VM:** Ping AM, IDM, PingDS — deploy via **Multipass VM** or **WSL2**.
+- **Windows setup guide:** `docs/forgeops-windows-setup.md`
+- **Cgroup diagnostic:** `./forgeops/scripts/check-cgroup.sh`
+- **Refresh specs:** `./forgeops/scripts/collect-system-spec.sh`
+
+When user asks to "run ForgeOps" or "setup instance", **never** retry minikube in Cursor workspace unless `check-cgroup.sh` passes. Direct them to Multipass/WSL2 on Windows instead.
 
 ## Non-negotiable rules for the agent
 
@@ -44,7 +95,11 @@ metadata:
 | `docs/saml-lab-am-as-idp.md` | AM as SAML IdP + sample SP app |
 | `docs/nhi-lab-guide.md` | Non-human identity patterns with IDM/AM |
 | `docs/postgresql-lab-setup.md` | Separate PostgreSQL app database |
+| `docs/forgeops-windows-setup.md` | Windows Multipass VM / WSL2 ForgeOps deploy |
+| `docs/forgeops-cloud-vm.md` | Cloud VM alternative when workspace is containerized |
 | `infra/postgresql/` | Docker Compose PostgreSQL + schema |
+| `forgeops/scripts/check-cgroup.sh` | Diagnose cgroup/memory block before deploy |
+| `forgeops/scripts/collect-system-spec.sh` | Refresh system specs for skill metadata |
 | `forgeops/scripts/start-postgresql.sh` | Start PostgreSQL |
 | `forgeops/scripts/deploy-full-stack.sh` | One-shot AM + IDM + DS deploy |
 | `forgeops/scripts/verify-stack.sh` | Check all platform pods |
