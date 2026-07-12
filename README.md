@@ -15,12 +15,16 @@ Run on your **local machine** (Docker + minikube required):
 # 2. Configure
 cp forgeops/config/env.example forgeops/config/env.local
 
-# 3. Deploy full stack
+# 3. Start PostgreSQL (optional app database)
+./forgeops/scripts/start-postgresql.sh
+
+# 4. Deploy full stack
 ./forgeops/scripts/deploy-full-stack.sh
 # Terminal 2: sudo minikube tunnel
 
-# 4. Verify
+# 5. Verify
 ./forgeops/scripts/verify-stack.sh
+./forgeops/scripts/verify-postgresql.sh
 ```
 
 Open **https://forgeops.example.com/platform** — password from `./forgeops info | grep amadmin`.
