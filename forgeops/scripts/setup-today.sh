@@ -15,6 +15,20 @@ log() { echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG_FILE"; }
 log "=== CIAM Lab — full setup started ==="
 log "Repo: $REPO_ROOT"
 
+# ForgeRock-only mode: skip PostgreSQL (original plan focus)
+FORGEROCK_ONLY="${FORGEROCK_ONLY:-0}"
+if [[ "$FORGEROCK_ONLY" == "1" ]]; then
+  exec "$SCRIPT_DIR/setup-forgerock.sh"
+fi
+
+# Block if cgroup prevents minikube (Cursor Docker workspace)
+if [[ -f "$SCRIPT_DIR/check-cgroup.sh" ]] && ! "$SCRIPT_DIR/check-cgroup.sh" >/dev/null 2>&1; then
+  log "ForgeRock/minikube blocked in this environment."
+  log "Windows: .\\forgeops\\scripts\\windows-forgerock.ps1"
+  log "Or: FORGEROCK_ONLY=1 ./forgeops/scripts/setup-forgerock.sh  (inside Multipass/WSL2 VM)"
+  exit 1
+fi
+
 # --- Config ---
 if [[ ! -f "$REPO_ROOT/forgeops/config/env.local" ]]; then
   cp "$REPO_ROOT/forgeops/config/env.example" "$REPO_ROOT/forgeops/config/env.local"
