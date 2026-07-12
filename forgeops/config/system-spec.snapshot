@@ -1,0 +1,25 @@
+# Auto-generated reference — do not commit secrets
+# Snapshot: 2026-07-12T09:04:59+00:00
+# Refresh: ./forgeops/scripts/collect-system-spec.sh
+
+physical_host_os: Windows
+dev_environment: Cursor cloud workspace (Docker container)
+workspace_os: Ubuntu 24.04.4 LTS
+workspace_kernel: 6.12.94+
+cpu_cores: 4
+cpu_model: Intel(R) Xeon(R) Processor
+ram_total_gib: 15
+ram_available_gib: 14
+swap: 0B
+disk_total_gib: 252
+disk_free_gib: 220
+virtualization: docker
+cgroup_type: domain threaded
+cgroup_subtree_control: cpuset cpu pids
+cgroup_memory_delegated: false
+docker_version: 29.6.1
+docker_storage_driver: vfs
+node_version: v22.14.0
+python_version: 3.12.3
+forgeops_runnable_in_workspace: false
+forgeops_deploy_target: Windows Multipass VM or WSL2 (docs/forgeops-windows-setup.md)
