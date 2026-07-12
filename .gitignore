@@ -3,6 +3,8 @@ vendor/forgeops/
 
 # Local env overrides
 forgeops/config/env.local
+forgeops/CREDENTIALS.local
+setup-today.log
 .env
 **/.env
 !**/.env.example
