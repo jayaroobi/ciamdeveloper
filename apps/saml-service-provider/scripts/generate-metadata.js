@@ -5,25 +5,15 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { SAML } = require('@node-saml/node-saml');
 
 const entityId = process.env.SAML_ENTITY_ID || 'urn:ciam-lab:saml-sp';
 const acsUrl = process.env.SAML_ACS_URL || 'http://localhost:3000/saml/acs';
-
-const saml = new SAML({
-  issuer: entityId,
-  callbackUrl: acsUrl,
-  idpIssuer: 'placeholder-will-replace-after-idp-export',
-  cert: 'MIICplaceholder', // metadata generation only; AM validates IdP cert separately
-  wantAssertionsSigned: true,
-});
 
 const metadataDir = path.join(__dirname, '..', 'metadata');
 if (!fs.existsSync(metadataDir)) {
   fs.mkdirSync(metadataDir, { recursive: true });
 }
 
-// Minimal SP metadata for AM import
 const metadata = `<?xml version="1.0"?>
 <EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
   entityID="${entityId}">
