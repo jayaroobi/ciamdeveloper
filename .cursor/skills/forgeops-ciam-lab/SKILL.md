@@ -35,6 +35,8 @@ metadata:
   python_version: "3.12.3"
   forgeops_runnable_in_workspace: "false"
   forgeops_deploy_target: "Windows Multipass VM or WSL2 (see docs/forgeops-windows-setup.md)"
+  local_repo_windows: "C:\\ciam"
+  local_hostname: "LAPTOP-4GLJMDEF"
 ---
 
 # ForgeOps CIAM Career Lab

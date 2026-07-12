@@ -51,12 +51,12 @@ $RepoPath = (Get-Location).Path
 $SetupScript = "$RepoPath\forgeops\scripts\setup-forgerock.sh"
 
 if (Test-Path $SetupScript) {
-    Write-Host "Mounting repo into VM..." -ForegroundColor Yellow
-    multipass mount "$RepoPath" "${VM_NAME}:/home/ubuntu/ciamdeveloper" 2>$null
-    $SetupCmd = 'cd /home/ubuntu/ciamdeveloper; chmod +x forgeops/scripts/*.sh; ./forgeops/scripts/setup-forgerock.sh'
+    Write-Host "Mounting repo into VM at /home/ubuntu/ciam ..." -ForegroundColor Yellow
+    multipass mount "$RepoPath" "${VM_NAME}:/home/ubuntu/ciam" 2>$null
+    $SetupCmd = 'cd /home/ubuntu/ciam; chmod +x forgeops/scripts/*.sh; ./forgeops/scripts/setup-forgerock.sh'
 } else {
     Write-Host "Repo not found - cloning inside VM..." -ForegroundColor Yellow
-    $SetupCmd = 'git clone https://github.com/jayaroobi/ciamdeveloper.git /home/ubuntu/ciamdeveloper; cd /home/ubuntu/ciamdeveloper; git checkout cursor/forgeops-ciam-career-lab-fe67; chmod +x forgeops/scripts/*.sh; ./forgeops/scripts/setup-forgerock.sh'
+    $SetupCmd = 'git clone https://github.com/jayaroobi/ciamdeveloper.git /home/ubuntu/ciam; cd /home/ubuntu/ciam; git checkout cursor/forgeops-ciam-career-lab-fe67; chmod +x forgeops/scripts/*.sh; ./forgeops/scripts/setup-forgerock.sh'
 }
 
 Write-Host ""
@@ -81,4 +81,4 @@ Write-Host "=== Add to C:\Windows\System32\drivers\etc\hosts (Admin Notepad) ===
 Write-Host "$ip  forgeops.example.com"
 Write-Host ""
 Write-Host "Then open: https://forgeops.example.com/platform" -ForegroundColor Green
-Write-Host "Credentials in VM: /home/ubuntu/ciamdeveloper/forgeops/CREDENTIALS.local" -ForegroundColor Green
+Write-Host "Credentials in VM: /home/ubuntu/ciam/forgeops/CREDENTIALS.local" -ForegroundColor Green
