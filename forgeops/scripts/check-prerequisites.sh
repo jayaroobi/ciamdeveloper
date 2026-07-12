@@ -25,7 +25,7 @@ check "docker" docker info
 check "minikube" minikube version
 check "kubectl" kubectl version --client
 check "helm" helm version
-check "kubens" kubens
+check "kubens" command -v kubens
 check "python3" python3 --version
 check "node" node --version
 check "npm" npm --version
