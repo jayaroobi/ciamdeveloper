@@ -74,6 +74,7 @@ minikube status >/dev/null 2>&1 || minikube start --cpus=3 --memory=9g --disk-si
 
 # --- Python venv + forgeops env ---
 log "Step 6/8: Configuring ForgeOps environment..."
+"$SCRIPT_DIR/ensure-python-venv.sh"
 [[ -d .venv ]] || python3 -m venv .venv
 # shellcheck source=/dev/null
 source .venv/bin/activate

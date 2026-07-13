@@ -40,8 +40,10 @@ if ! command -v kubens >/dev/null 2>&1; then
   }
 fi
 
-echo "==> Checking python3..."
-command -v python3 >/dev/null 2>&1 || sudo apt-get install -y -qq python3 python3-venv python3-pip
+echo "==> Checking python3 + venv..."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+"$SCRIPT_DIR/ensure-python-venv.sh"
+echo "python3-venv OK"
 
 echo ""
 echo "==> Versions:"

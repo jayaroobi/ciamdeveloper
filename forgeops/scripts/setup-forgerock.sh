@@ -59,12 +59,18 @@ if ! groups | grep -q docker; then
   log "Run: newgrp docker   (or log out/in after install-prerequisites)"
   exit 1
 fi
-minikube status >/dev/null 2>&1 || minikube start --cpus=3 --memory=9g --disk-size=40g --cni=true \
-  --kubernetes-version=stable --addons=ingress,volumesnapshots,metrics-server \
-  --driver=docker
+if ! minikube status >/dev/null 2>&1; then
+  # Wipe broken/partial clusters (stale certs cause x509 unknown authority)
+  minikube delete --all --purge 2>/dev/null || true
+  minikube start --cpus=3 --memory=9g --disk-size=40g --cni=true \
+    --kubernetes-version=stable --addons=ingress,volumesnapshots,metrics-server \
+    --driver=docker
+fi
 
 log "Step 5/7: Configure ForgeOps environment..."
-[[ -d .venv ]] || python3 -m venv .venv
+"$SCRIPT_DIR/ensure-python-venv.sh"
+rm -rf .venv
+python3 -m venv .venv
 # shellcheck source=/dev/null
 source .venv/bin/activate
 ./bin/forgeops configure

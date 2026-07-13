@@ -40,6 +40,7 @@ if ! grep -q "$FORGEOPS_FQDN" /etc/hosts 2>/dev/null; then
 fi
 
 if [[ ! -d .venv ]]; then
+  "${SCRIPT_DIR}/ensure-python-venv.sh"
   python3 -m venv .venv
 fi
 # shellcheck source=/dev/null
