@@ -34,9 +34,15 @@ metadata:
   node_version: "v22.14.0"
   python_version: "3.12.3"
   forgeops_runnable_in_workspace: "false"
-  forgeops_deploy_target: "Windows Multipass VM or WSL2 (see docs/forgeops-windows-setup.md)"
+  forgeops_deploy_target: "WSL2 Ubuntu + Docker Desktop (preferred on this laptop); Multipass only if Hyper-V driver works"
   local_repo_windows: "C:\\ciam"
   local_hostname: "LAPTOP-4GLJMDEF"
+  wsl_distro: "Ubuntu"
+  wsl_user: "jaya"
+  wsl_repo_path: "/mnt/c/ciam"
+  multipass_status: "installed but VirtualBox driver fails; prefer WSL2"
+  forgeops_git_tag_live_docs: "2026.2.1"
+  forgeops_git_tag_pdf_may_say: "2025.2.1 (stale — ignore)"
 ---
 
 # ForgeOps CIAM Career Lab
@@ -73,12 +79,91 @@ metadata:
 - **ForgeOps / minikube CANNOT run inside the Cursor workspace** due to `domain threaded` cgroup — memory limits blocked.
 - **RAM is sufficient** (14 GiB free) — the blocker is cgroup, not hardware.
 - **What works in Cursor workspace:** PostgreSQL (`start-postgresql.sh`), SAML SP app, docs, blog, code editing.
-- **What needs Windows host VM:** Ping AM, IDM, PingDS — deploy via **Multipass VM** or **WSL2**.
-- **Windows setup guide:** `docs/forgeops-windows-setup.md`
-- **Cgroup diagnostic:** `./forgeops/scripts/check-cgroup.sh`
+- **What needs Windows host:** Ping AM, IDM, PingDS — deploy via **WSL2 Ubuntu** (preferred) or Multipass.
+- **Windows setup guide:** `docs/forgeops-windows-setup.md` and `LOCAL.md`
+- **Cgroup diagnostic:** `./forgeops/scripts/check-cgroup.sh` (inside WSL)
 - **Refresh specs:** `./forgeops/scripts/collect-system-spec.sh`
 
-When user asks to "run ForgeOps" or "setup instance", **never** retry minikube in Cursor workspace unless `check-cgroup.sh` passes. Direct them to Multipass/WSL2 on Windows instead.
+When user asks to "run ForgeOps" or "setup instance", **never** retry minikube in Cursor workspace unless `check-cgroup.sh` passes. Direct them to WSL2 on Windows instead.
+
+## Windows host rules (physical_host_os = Windows)
+
+Apply these whenever the user is on the Windows laptop (`LAPTOP-4GLJMDEF`, repo `C:\ciam`):
+
+### Never confuse PowerShell with WSL
+
+- Prompt `PS C:\...>` = **Windows PowerShell** — no `sed`, `chmod`, `/mnt/c/...`, or `./setup-forgerock.sh`.
+- Prompt `jaya@LAPTOP-...:$` = **WSL Ubuntu** — run bash scripts here.
+- If user pastes bash into PowerShell and gets `sed/chmod not recognized` or `C:\mnt\c\ciam` errors: tell them they are in the wrong shell.
+
+### Preferred deploy path: WSL2 + Docker Desktop
+
+1. Ensure Docker Desktop is **Running** (whale icon steady).
+2. Open **Windows Terminal → Ubuntu**, or from PowerShell: `wsl -d Ubuntu`.
+3. In Ubuntu:
+   ```bash
+   cd /mnt/c/ciam
+   sed -i 's/\r$//' forgeops/scripts/*.sh forgeops/config/env.local
+   chmod +x forgeops/scripts/*.sh
+   ./forgeops/scripts/install-prerequisites-ubuntu.sh   # once
+   ./forgeops/scripts/setup-forgerock.sh
+   ```
+4. Second Ubuntu window when prompted: `sudo minikube tunnel`
+5. Windows hosts file: `127.0.0.1  forgeops.example.com`
+6. Open: https://forgeops.example.com/platform
+
+**PowerShell one-liner wrapper** (runs the same flow inside WSL):
+
+```powershell
+cd C:\ciam
+.\forgeops\scripts\setup-forgerock-wsl.ps1
+```
+
+### WSL timeout (`HCS_E_CONNECTION_TIMEOUT`)
+
+```powershell
+wsl --shutdown
+# wait ~10s, ensure Docker Desktop is up
+wsl -d Ubuntu
+```
+
+If still stuck: quit Docker Desktop fully, `wsl --shutdown`, restart Docker Desktop, then `wsl -d Ubuntu`.
+
+### Forgotten WSL sudo password
+
+From PowerShell (does not need old password):
+
+```powershell
+wsl -d Ubuntu -u root
+passwd jaya
+exit
+```
+
+### CRLF / env.local pitfalls
+
+- `env.local: line N: $'\r': command not found` → Windows CRLF. Fix: `sed -i 's/\r$//' forgeops/config/env.local forgeops/scripts/*.sh`
+- `env.local` must be **bash-safe** (use `forgeops/config/env.example` shape with `export ...`). Do **not** put `C:\ciam` Windows paths in a file sourced by bash.
+- `setup-forgerock.sh` sources env via `source <(sed 's/\r$//' ...)` to tolerate CRLF.
+- `init-local-windows.ps1` copies `env.example` → `env.local` (not the Windows-only template).
+
+### Git tag: PDF vs live docs
+
+- Live Ping docs ([repositories](https://docs.pingidentity.com/forgeops/2025.2/start/repositories.html), [quick start](https://docs.pingidentity.com/forgeops/2025.2/quick/quick-set-mini.html)): tag **`2026.2.1`**
+- Older PDF `forgeops-2025.2.pdf` may say `2025.2.1` and old paths (`cluster/resources`) — **follow live docs / `2026.2.1`**
+- Clone: `https://github.com/ForgeRock/forgeops` — `forgeops-extras` is Terraform samples only, not needed for minikube.
+
+### Multipass (fallback only)
+
+- Binary: `C:\Program Files\Multipass\bin\multipass.exe` (often missing from PATH).
+- Script: `forgeops/scripts/windows-forgerock.ps1` (uses full path to multipass).
+- On this laptop Multipass `local.driver` was **virtualbox** and launch failed (`Could not generate a new UUID`). Prefer WSL2. To retry Multipass later: Hyper-V driver (`multipass set local.driver=hyperv`) after enabling Hyper-V.
+
+### Agent behavior on Windows
+
+1. Detect shell: if user shows `PS C:\`, give PowerShell/`wsl` commands — never raw bash.
+2. Prefer WSL2 path over Multipass unless user insists or WSL cgroup check fails.
+3. Keep `LOCAL.md` and `docs/forgeops-windows-setup.md` aligned with these rules.
+4. Do not store or commit real passwords; if resetting WSL password, have the user run `passwd` themselves when possible.
 
 ## Non-negotiable rules for the agent
 
@@ -99,7 +184,12 @@ When user asks to "run ForgeOps" or "setup instance", **never** retry minikube i
 | `docs/saml-lab-am-as-idp.md` | AM as SAML IdP + sample SP app |
 | `docs/nhi-lab-guide.md` | Non-human identity patterns with IDM/AM |
 | `docs/postgresql-lab-setup.md` | Separate PostgreSQL app database |
-| `docs/forgeops-windows-setup.md` | Windows Multipass VM / WSL2 ForgeOps deploy |
+| `docs/forgeops-windows-setup.md` | Windows WSL2 (preferred) / Multipass ForgeOps deploy |
+| `LOCAL.md` | Short Windows cheat sheet for this laptop |
+| `forgeops/scripts/setup-forgerock.sh` | Main ForgeOps minikube deploy (run in WSL/Linux) |
+| `forgeops/scripts/setup-forgerock-wsl.ps1` | PowerShell → WSL wrapper for setup-forgerock |
+| `forgeops/scripts/windows-forgerock.ps1` | Multipass fallback launcher |
+| `forgeops/scripts/init-local-windows.ps1` | Creates bash-safe env.local + local-path.txt |
 | `docs/forgeops-cloud-vm.md` | Cloud VM alternative when workspace is containerized |
 | `infra/postgresql/` | Docker Compose PostgreSQL + schema |
 | `forgeops/scripts/check-cgroup.sh` | Diagnose cgroup/memory block before deploy |

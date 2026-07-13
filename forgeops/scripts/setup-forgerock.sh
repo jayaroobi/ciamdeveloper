@@ -32,10 +32,10 @@ if [[ -f "$SCRIPT_DIR/check-cgroup.sh" ]]; then
   "$SCRIPT_DIR/check-cgroup.sh" || exit 1
 fi
 
-# Load config if present
+# Load config if present (strip Windows CRLF so WSL bash can source it)
 if [[ -f "$REPO_ROOT/forgeops/config/env.local" ]]; then
   # shellcheck source=/dev/null
-  source "$REPO_ROOT/forgeops/config/env.local"
+  source <(sed 's/\r$//' "$REPO_ROOT/forgeops/config/env.local")
 fi
 
 log "Step 1/7: Install prerequisites..."

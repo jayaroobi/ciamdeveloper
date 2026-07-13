@@ -11,12 +11,12 @@ if (-not (Test-Path "$RepoRoot\README.md")) {
 
 Write-Host "Repo root: $RepoRoot" -ForegroundColor Cyan
 
-# 1. Copy Windows env template (reference file — env.local is gitignored)
-$Template = "$RepoRoot\forgeops\config\windows.env.template"
+# 1. Bash-safe env for WSL (env.example), plus Windows path reference
+$BashTemplate = "$RepoRoot\forgeops\config\env.example"
 $LocalEnv = "$RepoRoot\forgeops\config\env.local"
 if (-not (Test-Path $LocalEnv)) {
-    Copy-Item $Template $LocalEnv
-    Write-Host "Created forgeops/config/env.local" -ForegroundColor Green
+    Copy-Item $BashTemplate $LocalEnv
+    Write-Host "Created forgeops/config/env.local (from env.example)" -ForegroundColor Green
 } else {
     Write-Host "forgeops/config/env.local already exists" -ForegroundColor Yellow
 }

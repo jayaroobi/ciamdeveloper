@@ -16,65 +16,31 @@ Creates:
 - `forgeops/config/env.local` — your local ForgeOps settings
 - `forgeops/config/local-path.txt` — repo path reference (gitignored)
 
-## Deploy ForgeRock
+## Deploy ForgeRock (recommended: WSL2)
+
+Docker Desktop + WSL Ubuntu are already working on this laptop. Multipass is optional fallback.
+
+**From PowerShell (easiest):**
 
 ```powershell
 cd C:\ciam
-git pull origin cursor/forgeops-ciam-career-lab-fe67
-.\forgeops\scripts\windows-forgerock.ps1
+.\forgeops\scripts\setup-forgerock-wsl.ps1
 ```
 
-> Mounts are **not used** — repo is cloned via git inside the VM (Windows disables Multipass mounts by default).
+**Or open Windows Terminal → Ubuntu** (prompt must be `$`, not `PS C:\ciam>`), then:
 
-### If you see two errors together
-
-| Error | Meaning |
-|-------|---------|
-| `Mounts are disabled on this installation of Multipass` | Old script — run `git pull` (mount removed) |
-| `Could not generate a new UUID: Process failed to start` | Multipass cannot find Hyper-V or VirtualBox |
-
-### Fix UUID / launch failure
-
-**Step 1 — pull latest + diagnose**
-
-```powershell
-cd C:\ciam
-git pull origin cursor/forgeops-ciam-career-lab-fe67
-.\forgeops\scripts\diagnose-multipass-windows.ps1
+```bash
+cd /mnt/c/ciam
+chmod +x forgeops/scripts/*.sh
+./forgeops/scripts/check-cgroup.sh
+./forgeops/scripts/install-prerequisites-ubuntu.sh
+./forgeops/scripts/setup-forgerock.sh
 ```
 
-**Step 2 — pick ONE hypervisor**
+**Second Ubuntu window** (when prompted for tunnel):
 
-**Option A — Hyper-V** (Windows Pro/Enterprise, Admin PowerShell):
-
-```powershell
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
-multipass set local.driver=hyperv
-multipass delete --purge forgeops-lab
-# Reboot Windows
-.\forgeops\scripts\windows-forgerock.ps1
-```
-
-**Option B — VirtualBox** (Windows Home, or if Hyper-V fails):
-
-1. Install VirtualBox: https://www.virtualbox.org/
-2. Add `C:\Program Files\Oracle\VirtualBox` to **System** PATH (not User PATH only)
-3. Reboot Windows
-4. Open **normal** (non-Admin) PowerShell:
-
-```powershell
-multipass set local.driver=virtualbox
-multipass delete --purge forgeops-lab
-.\forgeops\scripts\windows-forgerock.ps1
-```
-
-Enable virtualization in BIOS (Intel VT-x / AMD-V) if both options fail.
-
-Second window when prompted:
-
-```powershell
-multipass shell forgeops-lab
-sudo minikube tunnel
+```bash
+sudo MINIKUBE_HOME=$HOME/.minikube KUBECONFIG=$HOME/.kube/config minikube tunnel
 ```
 
 ## Hosts file
@@ -82,13 +48,30 @@ sudo minikube tunnel
 Add to `C:\Windows\System32\drivers\etc\hosts` (Admin):
 
 ```text
-<VM-IP>  forgeops.example.com
+127.0.0.1  forgeops.example.com
 ```
-
-Get IP: `multipass info forgeops-lab`
 
 ## Open ForgeRock
 
 https://forgeops.example.com/platform
 
-Credentials: inside VM at `/home/ubuntu/ciam/forgeops/CREDENTIALS.local`
+Password: `cd ~/forgeops/bin && source ../.venv/bin/activate && ./forgeops info | grep amadmin`
+
+## Alternate: Multipass
+
+```powershell
+cd C:\ciam
+git pull origin cursor/forgeops-ciam-career-lab-fe67
+.\forgeops\scripts\diagnose-multipass-windows.ps1   # if launch fails
+.\forgeops\scripts\windows-forgerock.ps1
+```
+
+Mounts are **not used** — repo is cloned via git inside the VM.
+
+| Error | Meaning |
+|-------|---------|
+| `Mounts are disabled on this installation of Multipass` | Expected — script uses git clone in VM |
+| `Could not generate a new UUID` | Multipass cannot find Hyper-V or VirtualBox |
+
+**Hyper-V** (Windows Pro, Admin PowerShell): `multipass set local.driver=hyperv`  
+**VirtualBox** (Home): install VirtualBox, add to System PATH, `multipass set local.driver=virtualbox`

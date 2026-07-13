@@ -26,7 +26,8 @@ cd forgeops
 git checkout 2026.2.1
 ```
 
-> The official 2025.2 quick-start page references tag `2026.2.1` at time of writing.
+> **Git tag:** Live Ping docs ([repositories](https://docs.pingidentity.com/forgeops/2025.2/start/repositories.html), [quick start](https://docs.pingidentity.com/forgeops/2025.2/quick/quick-set-mini.html)) use tag **`2026.2.1`**. Older PDF exports of “ForgeOps 2025.2” may still say `2025.2.1` — prefer the live docs / `2026.2.1`.  
+> **Repos:** Clone public `https://github.com/ForgeRock/forgeops` (fork only if your org shares changes). `forgeops-extras` is for Terraform sample clouds — **not** required for minikube.
 
 ## Step 2 — Start minikube
 

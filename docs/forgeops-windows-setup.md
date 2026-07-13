@@ -11,10 +11,12 @@ Run ForgeOps on your **physical Windows machine** using one of the options below
 
 | Option | Best for | RAM needed | Difficulty |
 |--------|----------|------------|------------|
-| **A — Multipass VM** | Most reliable, cleanest | 9 GB for VM | Easy |
-| **B — WSL2 + Docker Desktop** | Daily dev workflow | 9 GB for WSL | Medium |
+| **B — WSL2 + Docker Desktop** | This laptop (Ubuntu + Docker already present) | ~10 GB for WSL | Easy |
+| **A — Multipass VM** | Clean isolated Ubuntu VM | 9 GB for VM | Medium |
 
-**Recommendation:** Start with **Option A (Multipass)** if Option B hits cgroup errors.
+**Recommendation (this machine):** Use **Option B (WSL2)**. Multipass is installed but currently set to the **VirtualBox** driver and launch fails (`Could not generate a new UUID`). Fix Multipass later with Hyper-V (`multipass set local.driver=hyperv`) if you prefer Option A.
+
+**Docs vs PDF:** Live Ping docs check out git tag **`2026.2.1`**. The PDF `forgeops-2025.2.pdf` still shows `2025.2.1` and some older paths (`cluster/resources`, `prereqs --secret-generator`). Follow live docs + this repo’s scripts.
 
 ---
 

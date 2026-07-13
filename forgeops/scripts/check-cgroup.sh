@@ -9,25 +9,32 @@ echo "Memory (RAM):"
 free -h | head -2
 echo ""
 
-echo "Cgroup root:"
-echo "  type:           $(cat /sys/fs/cgroup/cgroup.type)"
-echo "  controllers:    $(cat /sys/fs/cgroup/cgroup.controllers 2>/dev/null || echo n/a)"
-echo "  subtree_control: $(cat /sys/fs/cgroup/cgroup.subtree_control 2>/dev/null || echo n/a)"
-echo ""
+CGROUP_TYPE="unknown"
+SUBTREE=""
+if [[ -f /sys/fs/cgroup/cgroup.type ]]; then
+  CGROUP_TYPE=$(cat /sys/fs/cgroup/cgroup.type)
+  SUBTREE=$(cat /sys/fs/cgroup/cgroup.subtree_control 2>/dev/null || echo "")
+  echo "Cgroup root:"
+  echo "  type:            $CGROUP_TYPE"
+  echo "  controllers:     $(cat /sys/fs/cgroup/cgroup.controllers 2>/dev/null || echo n/a)"
+  echo "  subtree_control: ${SUBTREE:-n/a}"
+  echo ""
+else
+  echo "Cgroup root: /sys/fs/cgroup/cgroup.type missing (common on some WSL2 builds)"
+  echo "  Controllers present: $(ls /sys/fs/cgroup 2>/dev/null | tr '\n' ' ')"
+  echo ""
+fi
 
 if [[ -f /sys/fs/cgroup/docker/cgroup.type ]]; then
   echo "Docker cgroup:"
-  echo "  type:           $(cat /sys/fs/cgroup/docker/cgroup.type)"
-  echo "  subtree_control: $(cat /sys/fs/cgroup/docker/cgroup.subtree_control)"
+  echo "  type:            $(cat /sys/fs/cgroup/docker/cgroup.type)"
+  echo "  subtree_control: $(cat /sys/fs/cgroup/docker/cgroup.subtree_control 2>/dev/null || echo n/a)"
   echo ""
 fi
 
 VIRT=$(systemd-detect-virt 2>/dev/null || echo "unknown")
 echo "Virtualization: $VIRT"
 echo ""
-
-CGROUP_TYPE=$(cat /sys/fs/cgroup/cgroup.type)
-SUBTREE=$(cat /sys/fs/cgroup/cgroup.subtree_control 2>/dev/null || echo "")
 
 BLOCKED=0
 
@@ -37,7 +44,8 @@ if [[ "$CGROUP_TYPE" == *"threaded"* ]]; then
   BLOCKED=1
 fi
 
-if [[ "$SUBTREE" != *"memory"* ]]; then
+# Only enforce memory-delegation check when cgroup v2 type file exists
+if [[ -f /sys/fs/cgroup/cgroup.type && "$SUBTREE" != *"memory"* ]]; then
   echo "[BLOCKED] Memory controller NOT delegated to this environment"
   echo "          subtree_control: $SUBTREE"
   BLOCKED=1
@@ -54,15 +62,14 @@ if [[ $BLOCKED -eq 1 ]]; then
   echo "==> ForgeOps/minikube CANNOT run in this environment."
   echo ""
   echo "Fix options (pick one):"
-  echo "  1. Full Ubuntu VM (Multipass/VirtualBox/Hyper-V) with 9GB+ RAM"
-  echo "  2. Cloud VM (Oracle free tier / AWS / GCP) — see docs/forgeops-cloud-vm.md"
-  echo "  3. Windows: Multipass VM or WSL2 — see docs/forgeops-windows-setup.md"
-  echo "  4. Host OS terminal (NOT inside Cursor dev container) if you have bare metal Linux"
+  echo "  1. WSL2 Ubuntu + Docker Desktop (recommended on this laptop)"
+  echo "  2. Multipass VM with Hyper-V driver (not VirtualBox)"
+  echo "  3. Cloud VM — see docs/forgeops-cloud-vm.md"
   echo ""
-  echo "What DOES work here:"
+  echo "What DOES work in Cursor Docker workspace:"
   echo "  ./forgeops/scripts/start-postgresql.sh"
   echo "  apps/saml-service-provider (npm start)"
   exit 1
 else
-  echo "==> Environment OK for minikube. Run: ./forgeops/scripts/setup-today.sh"
+  echo "==> Environment OK for minikube. Run: ./forgeops/scripts/setup-forgerock.sh"
 fi
