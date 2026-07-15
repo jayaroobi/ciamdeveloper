@@ -1,10 +1,7 @@
 ---
 name: forgeops-ciam-lab
-description: CIAM career lab for Ping Advanced Identity Software (ForgeRock AM/IDM) hands-on practice, SAML/SSO, non-human identities, Amazon Bedrock, ForgeOps minikube setup, and remote job targeting (36L to 60L INR from Oman). Use when working on identity labs, ForgeOps, SAML, AM federation, IDM, NHI, Bedrock, blog posts, or career prep in this repo.
+description: CIAM lab for Ping Advanced Identity Software (ForgeRock AM/IDM) hands-on practice, SAML/SSO, non-human identities, Amazon Bedrock, ForgeOps minikube setup, and career prep. Use when working on identity labs, ForgeOps, SAML, AM federation, IDM, NHI, Bedrock, blog posts, or interview prep in this repo.
 metadata:
-  current_ctc_inr: "3600000"
-  target_ctc_inr: "6000000"
-  location: "Sohar, Oman (remote)"
   daily_time_budget_minutes: 30
   primary_focus: "SSO, SAML, Access Management (AM)"
   secondary_focus: "IDM, Non-Human Identities, Amazon Bedrock"
@@ -49,9 +46,7 @@ metadata:
 
 ## Practitioner context
 
-- Role: CIAM engineer (ForgeRock IDM / AM experience at Experian)
-- Current compensation: ~36L INR per annum
-- Goal: remote role at ~60L INR, working from Sohar, Oman
+- Role: CIAM engineer (ForgeRock IDM / AM experience)
 - Daily time budget: **30 minutes** — every task must fit one focused session
 - Learning priority: **SSO / SAML / AM** (hands-on), then IDM and non-human identities (NHI)
 - Secondary skill: Amazon Bedrock (tie to NHI and automation use cases)
@@ -180,7 +175,7 @@ exit
 | `docs/forgeops-full-stack-setup.md` | Full stack: AM, IDM, DS-idrepo, DS-cts, optional Gateway |
 | `docs/forgeops-setup.md` | Minikube quick reference (links to full stack) |
 | `docs/30-min-daily-curriculum.md` | 12-week daily plan |
-| `docs/career-roadmap-60l-remote.md` | Job search, resume, and interview prep |
+| `docs/career-roadmap-remote.md` | Job search, resume, and interview prep |
 | `docs/saml-lab-am-as-idp.md` | AM as SAML IdP + sample SP app |
 | `docs/nhi-lab-guide.md` | Non-human identity patterns with IDM/AM |
 | `docs/postgresql-lab-setup.md` | Separate PostgreSQL app database |
@@ -282,9 +277,9 @@ When planning a session, output:
 1. Complete a lab in `labs/week-XX/`
 2. Draft post in `blog/drafts/` with: problem, setup, steps, screenshots placeholders, pitfalls, references
 3. Suggested platforms: Dev.to, Medium, LinkedIn article, or Ping/ForgeRock community (follow their contribution guidelines)
-4. Cross-link to official Ping docs — never copy proprietary Experian internals
+4. Cross-link to official Ping docs — never copy proprietary employer internals
 
-## Career targeting (60L remote)
+## Career targeting (remote CIAM)
 
 Highlight demonstrable outcomes from this repo:
 
@@ -295,7 +290,7 @@ Highlight demonstrable outcomes from this repo:
 
 Target role titles: CIAM Engineer, IAM Engineer (ForgeRock/Ping), Access Management Consultant, Identity Platform Engineer
 
-See `docs/career-roadmap-60l-remote.md` for job boards, resume template, and interview prep.
+See `docs/career-roadmap-remote.md` for job boards, resume template, and interview prep.
 
 ## How to invoke
 

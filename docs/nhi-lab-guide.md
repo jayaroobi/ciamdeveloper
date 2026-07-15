@@ -22,7 +22,7 @@ This lab stays within documented identity patterns. It does **not** invent propr
 | Workload / pod | mTLS, SPIFFE, IAM role | Cloud IAM |
 | CI/CD pipeline | OIDC federation to cloud | GitHub Actions → AWS |
 
-**Exercise:** List 5 NHIs in a typical Experian-style CIAM estate (do not use real names). Classify each.
+**Exercise:** List 5 NHIs in a typical enterprise CIAM estate (do not use real names). Classify each.
 
 ### Session 2 — IDM managed object for service account
 

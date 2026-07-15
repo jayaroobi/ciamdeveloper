@@ -37,7 +37,7 @@ From the official [Start here](https://docs.pingidentity.com/forgeops/2025.2/sta
 | RAM | 9 GB |
 | Disk | 40 GB free |
 
-Run on your **local machine in Sohar** (laptop/workstation with Docker). This cloud VM cannot run minikube due to nested Docker overlay limits.
+Run on your **local machine** (laptop/workstation with Docker). This cloud VM cannot run minikube due to nested Docker overlay limits.
 
 ## Optional: PostgreSQL (application database)
 

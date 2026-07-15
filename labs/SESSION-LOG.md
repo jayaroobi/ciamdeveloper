@@ -2,15 +2,14 @@
 
 Track your 30-min daily sessions. Check off as you complete.
 
-## Week 1 — ForgeOps + PostgreSQL
+## Week 1 — ForgeOps lab (`forgeops.example.com`)
 
-- [ ] **Day 1** Prerequisites installed (`check-prerequisites.sh` all OK)
-- [ ] **Day 2** PostgreSQL running (`start-postgresql.sh` + `verify-postgresql.sh`)
-- [ ] **Day 3** ForgeOps deployed (`deploy-full-stack.sh` + `minikube tunnel`)
-- [ ] **Day 4** Login to `/platform`, `/am`, `/admin`
+- [x] **Day 1** Prerequisites installed (WSL)
+- [x] **Day 2–3** Minikube + Helm identity-platform deployed
+- [x] **Day 4** Hosts + login `/platform`, `/am`, `/admin`
 - [ ] **Day 5** Understand ds-idrepo vs ds-cts
-- [ ] **Day 6** `verify-stack.sh` passes
-- [ ] **Day 7** Blog draft published
+- [ ] **Day 6** `verify-stack.sh` + local playground branch
+- [ ] **Day 7** Blog draft updated
 
 ## Week 2 — SAML SSO
 

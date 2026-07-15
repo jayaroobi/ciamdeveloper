@@ -1,6 +1,6 @@
 # 30-minute daily curriculum (12 weeks)
 
-Goal: remote CIAM role at ~60L INR from Sohar, building on Experian ForgeRock experience.
+Goal: hands-on Ping / ForgeRock CIAM skills (SSO, SAML, AM, IDM) with a public lab portfolio.
 
 **Daily budget:** 30 minutes. Do not skip verification steps.
 

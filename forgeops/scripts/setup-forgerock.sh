@@ -75,14 +75,20 @@ python3 -m venv .venv
 source .venv/bin/activate
 ./bin/forgeops configure
 
-kubectl apply -f etc/resources/selfsigned-issuer.yaml
 cd bin
 ./forgeops env --env-name "$FORGEOPS_ENV_NAME" --fqdn "$FORGEOPS_FQDN" \
   --cluster-issuer "$FORGEOPS_CLUSTER_ISSUER" --single-instance
 
 kubectl create namespace "$FORGEOPS_NAMESPACE" 2>/dev/null || true
 kubens "$FORGEOPS_NAMESPACE"
-./forgeops prereqs
+
+# cert-manager CRDs must exist before ClusterIssuer (selfsigned-issuer.yaml)
+# Prefer nginx: minikube --addons=ingress already runs ingress-nginx (Traefik often times out)
+log "Installing ForgeOps prereqs (cert-manager + nginx ingress + secrets)..."
+./forgeops prereqs --nginx
+kubectl wait --for=condition=Established crd/clusterissuers.cert-manager.io --timeout=180s
+kubectl apply -f ../etc/resources/selfsigned-issuer.yaml
+
 kubectl apply -f ../etc/resources/minikube-fast-storage-class.yaml
 ./forgeops env --env-name "$FORGEOPS_ENV_NAME" --namespace "$FORGEOPS_NAMESPACE"
 

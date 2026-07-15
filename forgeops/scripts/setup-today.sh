@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-shot ForgeOps + PostgreSQL setup for local machine (Sohar lab)
+# One-shot ForgeOps + PostgreSQL setup for local machine (lab)
 # Run from repo root: ./forgeops/scripts/setup-today.sh 2>&1 | tee setup-today.log
 #
 # Official: https://docs.pingidentity.com/forgeops/2025.2/quick/quick-set-mini.html
