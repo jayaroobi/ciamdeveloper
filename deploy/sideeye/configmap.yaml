@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sideeye-config
+  namespace: sideeye
+  labels:
+    app.kubernetes.io/name: sideeye
+data:
+  chip_workspace: "chip"
+  chip_repos: ""
+  ciam_workspace: "ciam"
+  ciam_repos: ""
+  # Egress via Transit Gateway to these services (set real URLs in-cluster)
+  sonar_url: "https://sonarqube.example.internal"
+  jira_url: "https://jira.example.internal"
+  octopus_url: "https://octopus.example.internal"

@@ -1,0 +1,84 @@
+# CronJob sideeye-ciam — every 1 minute
+# Pod: ciam-reviewer --profile ciam ; IRSA sideeye-ciam
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sideeye-ciam
+  namespace: sideeye
+  labels:
+    app.kubernetes.io/name: sideeye
+    sideeye.profile: ciam
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app: ciam-reviewer
+            sideeye.profile: ciam
+        spec:
+          serviceAccountName: sideeye-ciam
+          restartPolicy: OnFailure
+          containers:
+            - name: ciam-reviewer
+              image: ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/sideeye:latest
+              imagePullPolicy: IfNotPresent
+              args: ["--profile", "ciam"]
+              env:
+                - name: AWS_REGION
+                  value: us-east-1
+                - name: SIDEYE_SECRET_ID
+                  value: sideeye/tokens
+                - name: SIDEYE_STATE_DIR
+                  value: /mnt/sideeye-state
+                - name: BEDROCK_MODEL_ID
+                  value: anthropic.claude-opus-4-20250514-v1:0
+                - name: SIDEYE_CIAM_WORKSPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: sideeye-config
+                      key: ciam_workspace
+                      optional: true
+                - name: SIDEYE_CIAM_REPOS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: sideeye-config
+                      key: ciam_repos
+                      optional: true
+                - name: SONAR_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: sideeye-config
+                      key: sonar_url
+                      optional: true
+                - name: JIRA_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: sideeye-config
+                      key: jira_url
+                      optional: true
+                - name: OCTOPUS_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: sideeye-config
+                      key: octopus_url
+                      optional: true
+              volumeMounts:
+                - name: sideeye-state
+                  mountPath: /mnt/sideeye-state
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: "1"
+                  memory: 1Gi
+          volumes:
+            - name: sideeye-state
+              persistentVolumeClaim:
+                claimName: sideeye-state

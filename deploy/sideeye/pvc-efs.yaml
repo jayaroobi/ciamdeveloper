@@ -1,0 +1,15 @@
+# EFS-backed PVC for state.db + logs (volume: sideeye-state)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sideeye-state
+  namespace: sideeye
+  labels:
+    app.kubernetes.io/name: sideeye
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 10Gi
