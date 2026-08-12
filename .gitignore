@@ -10,5 +10,6 @@ dist/
 build/
 mnt/
 sideeye-state/
+.sideeye-state/
 *.db
 .DS_Store
