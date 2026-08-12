@@ -1,0 +1,8 @@
+# Sideeye namespace — CIAM Sandbox EKS (ciam-eks-sandbox)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sideeye
+  labels:
+    app.kubernetes.io/name: sideeye
+    app.kubernetes.io/part-of: ciam-sandbox

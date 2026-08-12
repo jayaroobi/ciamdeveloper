@@ -1,0 +1,15 @@
+# Sideeye
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+*.egg-info/
+dist/
+build/
+mnt/
+sideeye-state/
+.sideeye-state/
+*.db
+.DS_Store
