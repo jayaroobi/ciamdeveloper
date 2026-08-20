@@ -1,0 +1,86 @@
+// @aic-managed
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2025 AIC Contributors
+
+/**
+ * Cursor hook — sessionStart
+ *
+ * Reads the "Critical reminders" section from AIC-architect.mdc and injects
+ * the bullet points as additional_context so the AI always has the
+ * non-negotiable architectural invariants, even when specific rules aren't
+ * included in context.
+ */
+const fs = require("fs");
+const path = require("path");
+const { resolveProjectRoot } = require("./AIC-resolve-project-root.cjs");
+const { isCursorNativeHookPayload } = require("./AIC-is-cursor-native-hook-payload.cjs");
+const {
+  conversationIdFromTranscriptPath,
+  resolveConversationIdFallback,
+} = require("./AIC-conversation-id.cjs");
+
+let hookInput = {};
+try {
+  const raw = fs.readFileSync(0, "utf8");
+  if (raw && raw.trim()) hookInput = JSON.parse(raw);
+} catch {
+  // Non-fatal — proceed without conversation_id
+}
+
+if (!isCursorNativeHookPayload(hookInput)) {
+  process.exit(0);
+}
+
+const conversationId =
+  conversationIdFromTranscriptPath(hookInput) ??
+  resolveConversationIdFallback(hookInput) ??
+  "";
+
+const ROUTER_PATH = path.join(__dirname, "..", "rules", "AIC-architect.mdc");
+const SECTION_START = "## Critical reminders";
+const SECTION_END = "## "; // next h2
+
+try {
+  const content = fs.readFileSync(ROUTER_PATH, "utf-8");
+  const startIdx = content.indexOf(SECTION_START);
+  if (startIdx === -1) {
+    process.exit(0);
+  }
+
+  const afterStart = content.slice(startIdx + SECTION_START.length);
+  const endIdx = afterStart.indexOf(SECTION_END);
+  const section = endIdx === -1 ? afterStart.trim() : afterStart.slice(0, endIdx).trim();
+
+  const bullets = section
+    .split("\n")
+    .filter((line) => line.startsWith("- **"))
+    .map((line) => line.trim())
+    .join("\n");
+
+  if (bullets.length > 0) {
+    const conversationLine = conversationId
+      ? `\nAIC_CONVERSATION_ID=${conversationId}`
+      : "";
+    const projectRoot = resolveProjectRoot(null, {
+      env: process.env,
+      useAicProjectRoot: true,
+    });
+    const updatePath = path.join(projectRoot, ".aic", "update-available.txt");
+    let updateSuffix = "";
+    try {
+      if (fs.existsSync(updatePath)) {
+        const content = fs.readFileSync(updatePath, "utf8").trim();
+        if (content.length > 0) updateSuffix = `\n${content}`;
+      }
+    } catch {
+      // Non-fatal — ignore file read errors
+    }
+    const output = JSON.stringify({
+      additional_context: `AIC Architectural Invariants (auto-injected):${conversationLine}\n${bullets}${updateSuffix}`,
+    });
+    process.stdout.write(output);
+  }
+} catch {
+  // Non-fatal — hook must never block the session
+  process.exit(0);
+}
