@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="ProgId" content="Word.Document">
+<title>EDCC Report - Jaya Pages 2 & 3</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; background: #e8ece9; color: #1a1a1a; }
+
+  .page {
+    width: 210mm; min-height: 297mm; margin: 10mm auto; background: #fff;
+    border: 3px double #1B4332; padding: 10mm 12mm 12mm;
+    page-break-after: always; position: relative;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* Header */
+  .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #1B4332; padding-bottom: 8px; margin-bottom: 10px; }
+  .logo-circle {
+    width: 58px; height: 58px; border-radius: 50%; border: 2px solid #1B4332;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-size: 8px; font-weight: bold; color: #1B4332; line-height: 1.2; background: #D8F3DC;
+  }
+  .header-center { text-align: center; flex: 1; padding: 0 10px; }
+  .header-center .tag { font-size: 9px; letter-spacing: 2px; color: #40916C; font-weight: bold; }
+  .header-center .org { font-size: 11px; font-weight: bold; color: #1B4332; }
+  .header-center .govt { font-size: 9px; color: #555; }
+  .badge {
+    background: linear-gradient(135deg, #E07A5F, #D4A017); color: white;
+    border-radius: 8px; padding: 6px 10px; font-size: 9px; font-weight: bold; text-align: center; line-height: 1.3;
+  }
+
+  /* Title bars */
+  .title-bar { background: #1B4332; color: white; padding: 10px 16px; font-size: 16px; font-weight: bold; margin-top: 6px; }
+  .subtitle-bar { background: #40916C; color: white; padding: 7px 16px; font-size: 12px; font-weight: 600; }
+  .date-row { text-align: right; font-size: 10px; color: #555; margin: 6px 0 10px; font-style: italic; }
+
+  /* Key takeaways box */
+  .takeaways { border: 2px solid #40916C; margin-bottom: 14px; }
+  .takeaways-header { background: #40916C; color: white; padding: 7px 14px; font-weight: bold; font-size: 12px; }
+  .takeaways-body { background: #EDF7F0; padding: 12px 16px; }
+  .takeaways-body ul { list-style: none; padding: 0; }
+  .takeaways-body li { font-size: 10.5px; line-height: 1.65; padding: 3px 0 3px 18px; position: relative; }
+  .takeaways-body li::before { content: "▸"; position: absolute; left: 0; color: #E07A5F; font-weight: bold; }
+  .takeaways-body strong { color: #1B4332; }
+
+  /* Body text */
+  .body-text { font-size: 10.5px; line-height: 1.7; text-align: justify; margin-bottom: 12px; color: #222; }
+
+  /* Graphical table */
+  .g-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 12px 0; font-size: 10px; border: 2px solid #40916C; border-radius: 6px; overflow: hidden; }
+  .g-table thead th { background: linear-gradient(135deg, #1B4332, #2D6A4F); color: white; padding: 9px 8px; font-weight: bold; text-align: center; border-right: 1px solid #40916C; }
+  .g-table thead th:last-child { border-right: none; }
+  .g-table tbody td { padding: 8px; text-align: center; border-bottom: 1px solid #C7E8D0; border-right: 1px solid #E0F0E5; }
+  .g-table tbody tr:nth-child(even) td { background: #F0FAF3; }
+  .g-table tbody tr:last-child td { border-bottom: none; }
+  .g-table .sector-agri { color: #2D6A4F; font-weight: bold; text-align: left; padding-left: 12px; }
+  .g-table .sector-ind { color: #C1121F; font-weight: bold; text-align: left; padding-left: 12px; }
+  .g-table .sector-dom { color: #E76F51; font-weight: bold; text-align: left; padding-left: 12px; }
+  .g-table .highlight { background: #FFF3CD !important; font-weight: bold; color: #C1121F; }
+
+  /* Section label */
+  .section-label { background: #D8F3DC; border-left: 4px solid #E07A5F; padding: 6px 12px; font-size: 11px; font-weight: bold; color: #1B4332; margin: 14px 0 8px; }
+
+  /* Infographic row */
+  .infographic-row { display: flex; gap: 10px; margin-top: 10px; }
+  .infographic-row img { width: 49%; border: 1px solid #C7E8D0; border-radius: 6px; background: #F8FAF9; }
+
+  /* Sector cards */
+  .sector-cards { display: flex; gap: 8px; margin: 10px 0; }
+  .sector-card { flex: 1; border-radius: 8px; padding: 10px; color: white; text-align: center; }
+  .sector-card.agri { background: linear-gradient(135deg, #2D6A4F, #40916C); }
+  .sector-card.dom { background: linear-gradient(135deg, #E76F51, #F4A261); }
+  .sector-card.ind { background: linear-gradient(135deg, #C1121F, #E07A5F); }
+  .sector-card .num { font-size: 18px; font-weight: bold; }
+  .sector-card .lbl { font-size: 9px; margin-top: 3px; opacity: 0.9; }
+  .sector-card .gr { font-size: 10px; margin-top: 4px; background: rgba(255,255,255,0.25); border-radius: 4px; padding: 2px 6px; display: inline-block; }
+
+  /* Driver boxes */
+  .driver-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 10px 0; }
+  .driver-box { border: 2px solid; border-radius: 8px; overflow: hidden; font-size: 9.5px; }
+  .driver-box .dh { padding: 6px 10px; font-weight: bold; color: white; font-size: 10px; }
+  .driver-box .db { padding: 8px 10px; background: #FAFAFA; line-height: 1.6; }
+  .driver-box.ind { border-color: #C1121F; } .driver-box.ind .dh { background: #C1121F; }
+  .driver-box.agri { border-color: #2D6A4F; } .driver-box.agri .dh { background: #2D6A4F; }
+  .driver-box.dom { border-color: #E76F51; } .driver-box.dom .dh { background: #E76F51; }
+
+  /* Conclusion box */
+  .conclusion { background: linear-gradient(135deg, #1B4332, #2D6A4F); color: white; border-radius: 8px; padding: 12px 16px; margin-top: 12px; font-size: 10px; line-height: 1.7; }
+  .conclusion strong { color: #FFD166; }
+
+  .page-footer { position: absolute; bottom: 8mm; left: 12mm; right: 12mm; font-size: 8px; color: #888; border-top: 1px solid #ddd; padding-top: 4px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page">
+  <div class="header">
+    <div class="logo-circle">EDCC<br>REPORT</div>
+    <div class="header-center">
+      <div class="tag">ANALYTICAL BRIEF</div>
+      <div class="org">Energy Development &amp; Conservation Council</div>
+      <div class="govt">New Delhi, India</div>
+    </div>
+    <div class="badge">2022–2025<br>DATA<br>ANALYSIS</div>
+  </div>
+
+  <div class="title-bar">Trend in Electricity Consumption</div>
+  <div class="subtitle-bar">Sector-Wise Analysis &amp; Overall Growth Patterns (2022–2025)</div>
+  <div class="date-row">Prepared by: Jaya | August 2026</div>
+
+  <div class="takeaways">
+    <div class="takeaways-header">Key Takeaways</div>
+    <div class="takeaways-body">
+      <ul>
+        <li>Combined electricity consumption across three sectors rose from <strong>165.22 BU (2022)</strong> to <strong>203.35 BU (2025)</strong> — a growth of <strong>23.1%</strong>.</li>
+        <li><strong>Agriculture</strong> remains the largest consumer at <strong>98.45 BU</strong>, accounting for <strong>48.4%</strong> of total sector consumption in 2025.</li>
+        <li><strong>Domestic</strong> consumption grew to <strong>71.25 BU</strong>, driven by rapid urbanisation and higher use of air conditioners.</li>
+        <li><strong>Industrial</strong> consumption recorded the sharpest single-year jump of <strong>22.6%</strong> in 2022–23, reaching <strong>33.65 BU</strong> by 2025.</li>
+        <li>National total demand increased from <strong>182 BU to 221 BU</strong>, closely aligning with the three-sector growth trend of <strong>21.4%</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="body-text">
+    Electricity consumption in India has increased steadily across agriculture, industrial, and domestic sectors between 2022 and 2025. Every sector recorded higher consumption in each successive year without any decline. This continuous rise reflects growing pressure on India's power infrastructure and supports the Chairman's concern regarding sustainable electricity management.
+  </p>
+
+  <div class="section-label">Table 1: Sector-wise Electricity Consumption (Billion Units)</div>
+  <table class="g-table">
+    <thead>
+      <tr><th>Sector</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>Growth</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="sector-agri">🌾 Agriculture</td>
+        <td>83.30</td><td>88.96</td><td>93.67</td><td>98.45</td>
+        <td class="highlight">+18.2%</td>
+      </tr>
+      <tr>
+        <td class="sector-dom">🏠 Domestic</td>
+        <td>58.44</td><td>64.20</td><td>67.80</td><td>71.25</td>
+        <td class="highlight">+21.9%</td>
+      </tr>
+      <tr>
+        <td class="sector-ind">🏭 Industrial</td>
+        <td>23.48</td><td>28.78</td><td>30.78</td><td>33.65</td>
+        <td class="highlight">+43.3%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sector-cards">
+    <div class="sector-card agri">
+      <div class="num">98.45 BU</div>
+      <div class="lbl">Agriculture — Largest Consumer</div>
+      <div class="gr">48.4% Share | +18.2%</div>
+    </div>
+    <div class="sector-card dom">
+      <div class="num">71.25 BU</div>
+      <div class="lbl">Domestic — 2nd Largest</div>
+      <div class="gr">35.1% Share | +21.9%</div>
+    </div>
+    <div class="sector-card ind">
+      <div class="num">33.65 BU</div>
+      <div class="lbl">Industrial — Fastest Growing</div>
+      <div class="gr">16.6% Share | +43.3%</div>
+    </div>
+  </div>
+
+  <div class="infographic-row">
+    <img src="Jaya_charts/pib_style/infographic_sector_2025.png" alt="Sector consumption 2025">
+    <img src="Jaya_charts/pib_style/infographic_combined_growth.png" alt="Combined growth">
+  </div>
+
+  <div class="page-footer">
+    <span>Source: EDCC Data, Table 1 &amp; Table 2</span>
+    <span>Page 2 of 3 | EDCC Analytical Report — Jaya</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3 ==================== -->
+<div class="page">
+  <div class="header">
+    <div class="logo-circle">EDCC<br>REPORT</div>
+    <div class="header-center">
+      <div class="tag">ANALYTICAL BRIEF</div>
+      <div class="org">Energy Development &amp; Conservation Council</div>
+      <div class="govt">New Delhi, India</div>
+    </div>
+    <div class="badge">HIGHEST<br>GROWTH<br>SECTOR</div>
+  </div>
+
+  <div class="title-bar">Highest Growth Sector Analysis</div>
+  <div class="subtitle-bar">Identification of Dominant Sector &amp; Key Drivers of Growth</div>
+  <div class="date-row">Prepared by: Jaya | August 2026</div>
+
+  <div class="takeaways">
+    <div class="takeaways-header">Key Findings</div>
+    <div class="takeaways-body">
+      <ul>
+        <li>The <strong>Industrial sector recorded the highest growth at 43.3%</strong> — more than double agriculture (18.2%) and domestic (21.9%).</li>
+        <li>Industrial CAGR of <strong>12.7%</strong> is the highest among all sectors, with a peak single-year growth of <strong>22.6%</strong> in 2022–23.</li>
+        <li>Industrial share of domestic consumption rose from <strong>40.2% to 47.2%</strong>, signalling a structural shift in demand.</li>
+        <li>Main drivers: <strong>industrial expansion</strong>, <strong>increased agricultural irrigation</strong>, and <strong>rapid urbanisation with higher AC use</strong>.</li>
+        <li>All three sectors contribute to <strong>peak electricity demand</strong> alongside cooling requirements.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="body-text">
+    After comparing consumption data across all three sectors from 2022 to 2025, the industrial sector clearly emerges as the highest-growth segment. While agriculture adds the most absolute consumption, industry is expanding at the fastest rate — a trend with significant implications for power supply planning and infrastructure development.
+  </p>
+
+  <div class="section-label">Comparative Growth Analysis (2022–2025)</div>
+  <table class="g-table">
+    <thead>
+      <tr><th>Measure</th><th>Agriculture</th><th>Industrial</th><th>Domestic</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2022 Consumption (BU)</td><td>83.30</td><td>23.48</td><td>58.44</td></tr>
+      <tr><td>2025 Consumption (BU)</td><td>98.45</td><td>33.65</td><td>71.25</td></tr>
+      <tr><td>Absolute Growth (BU)</td><td>+15.15</td><td>+10.17</td><td>+12.81</td></tr>
+      <tr><td>Percentage Growth</td><td>18.2%</td><td class="highlight">43.3%</td><td>21.9%</td></tr>
+      <tr><td>CAGR</td><td>5.8%</td><td class="highlight">12.7%</td><td>6.7%</td></tr>
+      <tr><td>Best Single Year</td><td>6.8%</td><td class="highlight">22.6%</td><td>9.9%</td></tr>
+    </tbody>
+  </table>
+
+  <div class="infographic-row">
+    <img src="Jaya_charts/pib_style/infographic_growth_rates.png" alt="Growth rates comparison">
+    <img src="Jaya_charts/pib_style/infographic_industrial_rise.png" alt="Industrial rise">
+  </div>
+
+  <div class="section-label">Key Drivers of Sectoral Growth</div>
+  <div class="driver-grid">
+    <div class="driver-box ind">
+      <div class="dh">🏭 Industrial (+43.3%)</div>
+      <div class="db">
+        • Industrial expansion<br>
+        • Continuous year-on-year rise<br>
+        • Round-the-clock peak demand pressure<br>
+        • 22.6% surge in 2022–23
+      </div>
+    </div>
+    <div class="driver-box agri">
+      <div class="dh">🌾 Agriculture (+18.2%)</div>
+      <div class="db">
+        • Increased agricultural irrigation<br>
+        • Largest consumption base (83.30 BU)<br>
+        • Seasonal peak load contribution<br>
+        • Steady 5–7% annual growth
+      </div>
+    </div>
+    <div class="driver-box dom">
+      <div class="dh">🏠 Domestic (+21.9%)</div>
+      <div class="db">
+        • Rapid urbanisation<br>
+        • Higher use of air conditioners<br>
+        • Rising household appliance use<br>
+        • Consistent 5–10% annual growth
+      </div>
+    </div>
+  </div>
+
+  <div class="infographic-row" style="margin-top:8px;">
+    <img src="Jaya_charts/pib_style/infographic_sector_trend.png" alt="Sector trend">
+    <img src="Jaya_charts/pib_style/infographic_demand_growth.png" alt="Demand growth">
+  </div>
+
+  <div class="conclusion">
+    <strong>Conclusion:</strong> Electricity consumption rose in every sector every year from 2022 to 2025. Combined consumption grew 23.1% (165.22 → 203.35 BU). Agriculture remains the largest consumer (98.45 BU), but the <strong>industrial sector recorded the highest growth at 43.3%</strong>. These findings confirm the need for effective energy planning and sustainable electricity management as highlighted by the Chairman of the Council.
+  </div>
+
+  <div class="page-footer">
+    <span>Source: EDCC Data, Tables 1 &amp; 2 | Additional Information</span>
+    <span>Page 3 of 3 | EDCC Analytical Report — Jaya</span>
+  </div>
+</div>
+
+</body>
+</html>
