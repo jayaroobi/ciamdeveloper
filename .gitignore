@@ -1,0 +1,24 @@
+# ForgeOps vendor clone (clone locally with scripts)
+vendor/forgeops/
+
+# Local env overrides
+forgeops/config/env.local
+forgeops/config/local-path.txt
+forgeops/CREDENTIALS.local
+setup-today.log
+.env
+**/.env
+!**/.env.example
+
+# Node / Python
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# SAML certs (generate locally)
+apps/saml-service-provider/certs/
+apps/saml-service-provider/metadata/idp-metadata.xml
+
+# OS
+.DS_Store
