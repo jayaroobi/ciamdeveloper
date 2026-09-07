@@ -55,7 +55,11 @@ git fetch --tags -q
 git checkout "$FORGEOPS_TAG"
 
 log "Step 4/7: Start minikube (official profile: 3 CPU, 9G RAM, 40G disk)..."
-if ! groups | grep -q docker; then
+if ! docker info >/dev/null 2>&1; then
+  if ! groups | grep -q docker; then
+    log "Docker not available. Start Docker Desktop (WSL) or run: newgrp docker"
+    exit 1
+  fi
   log "Run: newgrp docker   (or log out/in after install-prerequisites)"
   exit 1
 fi

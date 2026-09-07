@@ -1,9 +1,31 @@
 # Your local setup (Windows)
 
 **Repo path:** `C:\ciam`  
-**New laptop?** Start here → [docs/new-laptop-setup.md](docs/new-laptop-setup.md) (AM + IDM from scratch)
+**New laptop?** One command → [docs/from-scratch.md](docs/from-scratch.md)
 
-## One-time init (PowerShell)
+## From scratch (new laptop)
+
+**PowerShell as Administrator** (first time):
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+cd C:\
+git clone https://github.com/jayaroobi/ciamdeveloper.git ciam
+cd C:\ciam
+git checkout cursor/forgeops-ciam-career-lab-fe67
+.\forgeops\scripts\setup-from-scratch.ps1
+```
+
+After reboot / Docker Desktop installed:
+
+```powershell
+cd C:\ciam
+.\forgeops\scripts\setup-from-scratch.ps1 -DeployOnly
+```
+
+Second Ubuntu window when prompted: `sudo minikube tunnel`
+
+## One-time init (if repo already cloned)
 
 ```powershell
 cd C:\ciam

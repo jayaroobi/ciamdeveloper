@@ -4,7 +4,17 @@
 set -euo pipefail
 
 echo "==> Installing Docker..."
-if ! command -v docker >/dev/null 2>&1; then
+if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+  echo "Docker already available (Docker Desktop WSL integration or existing install)"
+elif command -v docker >/dev/null 2>&1; then
+  echo "Docker CLI found but daemon not reachable — start Docker Desktop and enable WSL integration"
+else
+  # WSL2 + Docker Desktop: prefer Docker Desktop over standalone dockerd
+  if grep -qi microsoft /proc/version 2>/dev/null; then
+    echo "WSL detected — install/start Docker Desktop on Windows with WSL integration enabled"
+    echo "  Settings -> Resources -> WSL Integration -> Ubuntu"
+    exit 1
+  fi
   curl -fsSL https://get.docker.com | sh
   sudo usermod -aG docker "$USER" || true
   echo "!! Added $USER to docker group — log out/in or run: newgrp docker"
