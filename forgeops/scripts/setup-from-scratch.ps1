@@ -48,22 +48,37 @@ function Write-Check {
 function Get-WslText {
     $script:WslExit = 1
     $outFile = Join-Path $env:TEMP "ciam-wsl-list.txt"
-    cmd.exe /c "wsl.exe -l -v > `"$outFile`" 2>&1"
-    $script:WslExit = $LASTEXITCODE
+    $errFile = Join-Path $env:TEMP "ciam-wsl-list.err"
+    Remove-Item $outFile, $errFile -ErrorAction SilentlyContinue
+    $wslExe = Join-Path $env:SystemRoot "System32\wsl.exe"
+    if (-not (Test-Path $wslExe)) {
+        return "not installed"
+    }
+    try {
+        $p = Start-Process -FilePath $wslExe -ArgumentList @("-l","-v") `
+            -NoNewWindow -Wait -PassThru `
+            -RedirectStandardOutput $outFile `
+            -RedirectStandardError $errFile `
+            -ErrorAction SilentlyContinue
+        if ($p -and $p.HasExited) { $script:WslExit = $p.ExitCode } else { $script:WslExit = 1 }
+    } catch {
+        $script:WslExit = 1
+        return "not installed"
+    }
     $text = ""
-    if (Test-Path $outFile) {
-        try {
-            $bytes = [System.IO.File]::ReadAllBytes($outFile)
-            if ($bytes.Length -ge 2 -and $bytes[1] -eq 0) {
-                $text = [System.Text.Encoding]::Unicode.GetString($bytes)
-            } else {
-                $text = [System.IO.File]::ReadAllText($outFile)
-            }
-        } catch {
-            $text = Get-Content $outFile -Raw -ErrorAction SilentlyContinue
+    foreach ($f in @($outFile, $errFile)) {
+        if (Test-Path $f) {
+            try {
+                $bytes = [System.IO.File]::ReadAllBytes($f)
+                if ($bytes.Length -ge 2 -and $bytes[1] -eq 0) {
+                    $text += [System.Text.Encoding]::Unicode.GetString($bytes)
+                } else {
+                    $text += [System.IO.File]::ReadAllText($f)
+                }
+            } catch {}
         }
     }
-    if (-not $text) { $text = "" }
+    if (-not $text) { $text = "not installed" }
     return ($text -replace "`0", "")
 }
 
