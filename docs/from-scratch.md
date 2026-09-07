@@ -16,11 +16,20 @@ cd C:\
 irm https://raw.githubusercontent.com/jayaroobi/ciamdeveloper/cursor/forgeops-ciam-career-lab-fe67/forgeops/scripts/create-ciam-folder.ps1 | iex
 ```
 
-That clones the repo and **creates** `C:\ciam`. Then:
+That clones the repo and **creates** `C:\ciam`. Then run the **single setup file** (precheck first, then install):
 
 ```powershell
 cd C:\ciam
+git pull origin cursor/forgeops-ciam-career-lab-fe67
 .\forgeops\scripts\setup-from-scratch.ps1
+```
+
+It prints OK / MISSING / WARN and recommended installs, then asks before deploying AM+IDM.
+
+Precheck only (no install):
+
+```powershell
+.\forgeops\scripts\setup-from-scratch.ps1 -PrecheckOnly
 ```
 
 **Or all in one (clone + create folder):**

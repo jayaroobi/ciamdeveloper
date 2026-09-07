@@ -14,6 +14,7 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 cd C:\
 irm https://raw.githubusercontent.com/jayaroobi/ciamdeveloper/cursor/forgeops-ciam-career-lab-fe67/forgeops/scripts/create-ciam-folder.ps1 | iex
 cd C:\ciam
+git pull origin cursor/forgeops-ciam-career-lab-fe67
 .\forgeops\scripts\setup-from-scratch.ps1
 ```
 
