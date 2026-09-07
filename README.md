@@ -37,7 +37,7 @@ git checkout cursor/forgeops-ciam-career-lab-fe67
 |-------------|-----------|--------|
 | **WSL2 Ubuntu + Docker Desktop** (recommended on Windows) | Yes | See below |
 | Bare Linux / Ubuntu VM | Yes | Same bash scripts |
-| Cursor Docker workspace | **No** | cgroup blocks minikube |
+| Cursor Docker workspace | **No** | cgroup blocks minikube — use [docs/HANDS-ON.md](docs/HANDS-ON.md) for partial lab |
 | Multipass | Fallback only | VirtualBox driver often broken on this laptop |
 
 ### 3. Windows + WSL2 (recommended)
