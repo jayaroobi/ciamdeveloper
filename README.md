@@ -40,6 +40,16 @@ git checkout cursor/forgeops-ciam-career-lab-fe67
 | Cursor Docker workspace | **No** | cgroup blocks minikube — use [docs/HANDS-ON.md](docs/HANDS-ON.md) for partial lab |
 | Multipass | Fallback only | VirtualBox driver often broken on this laptop |
 
+**Cursor workspace (partial lab — no ForgeOps AM):**
+
+```bash
+chmod +x forgeops/scripts/*.sh
+./forgeops/scripts/setup-workspace-hands-on.sh
+cd apps/saml-service-provider && npm start   # http://localhost:3000
+```
+
+Full SSO needs AM in WSL — see [docs/HANDS-ON.md](docs/HANDS-ON.md).
+
 ### 3. Windows + WSL2 (recommended)
 
 1. Install **Docker Desktop** (WSL2 backend) and start it.
