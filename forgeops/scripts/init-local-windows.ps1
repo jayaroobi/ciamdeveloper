@@ -32,7 +32,10 @@ Write-Host "Updated forgeops/config/local-path.txt" -ForegroundColor Green
 
 # 3. Execution policy hint
 Write-Host ""
-Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned"
-Write-Host "  cd $RepoRoot"
-Write-Host "  .\forgeops\scripts\windows-forgerock.ps1"
+Write-Host "Next steps (new laptop — AM + IDM via WSL2):" -ForegroundColor Cyan
+Write-Host "  1. Install WSL2 Ubuntu + Docker Desktop (see docs/new-laptop-setup.md)"
+Write-Host "  2. Set-ExecutionPolicy -Scope CurrentUser RemoteSigned"
+Write-Host "  3. cd $RepoRoot"
+Write-Host "  4. .\forgeops\scripts\setup-forgerock-wsl.ps1"
+Write-Host ""
+Write-Host "Full guide: docs/new-laptop-setup.md"

@@ -1,7 +1,7 @@
 # Your local setup (Windows)
 
 **Repo path:** `C:\ciam`  
-**Machine:** LAPTOP-4GLJMDEF
+**New laptop?** Start here → [docs/new-laptop-setup.md](docs/new-laptop-setup.md) (AM + IDM from scratch)
 
 ## One-time init (PowerShell)
 
