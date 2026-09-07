@@ -90,21 +90,31 @@ if (-not $DeployOnly) {
 
     if (-not $SkipPrereqs) {
         Write-Step -Num "2" -Msg "WSL2 + Ubuntu"
-        $wslList = wsl -l -v 2>$null
-        if ($LASTEXITCODE -ne 0 -or $wslList -notmatch $WslDistro) {
+        $oldEap = $ErrorActionPreference
+        $ErrorActionPreference = "Continue"
+        $wslOutput = wsl -l -v 2>&1
+        $wslExit = $LASTEXITCODE
+        $ErrorActionPreference = $oldEap
+        $wslText = ($wslOutput | Out-String)
+
+        $wslMissing = ($wslText -match "not installed") -or ($wslExit -ne 0) -or ($wslText -notmatch $WslDistro)
+        if ($wslMissing) {
             if (-not (Test-Admin)) {
-                Write-Host "WSL not found. Re-run this script as Administrator:" -ForegroundColor Red
-                Write-Host "  wsl --install -d Ubuntu-24.04"
+                Write-Host "WSL is not installed. Re-run this script as Administrator, or run:" -ForegroundColor Red
+                Write-Host "  wsl --install -d Ubuntu"
                 Write-Host "Then reboot, open Ubuntu once to create your user, and re-run."
                 exit 1
             }
-            Write-Host "Installing WSL + Ubuntu-24.04 (may require reboot)..."
-            wsl --install -d Ubuntu-24.04 --no-launch
+            Write-Host "Installing WSL + Ubuntu (requires reboot)..." -ForegroundColor Yellow
+            wsl --install -d Ubuntu
             Write-Host ""
-            Write-Host "REBOOT Windows, open Ubuntu from Start menu, create username/password," -ForegroundColor Yellow
-            Write-Host "install Docker Desktop, then re-run:" -ForegroundColor Yellow
-            Write-Host "  cd $RepoPath"
-            Write-Host "  .\forgeops\scripts\setup-from-scratch.ps1 -DeployOnly"
+            Write-Host "REBOOT Windows now." -ForegroundColor Yellow
+            Write-Host "After reboot:" -ForegroundColor Yellow
+            Write-Host "  1. Open Ubuntu from Start menu, create username and password"
+            Write-Host "  2. Install Docker Desktop: https://www.docker.com/products/docker-desktop/"
+            Write-Host "  3. Then run:"
+            Write-Host "       cd $RepoPath"
+            Write-Host "       .\forgeops\scripts\setup-from-scratch.ps1 -DeployOnly"
             exit 0
         }
         Write-Host "WSL OK:" -ForegroundColor Green
