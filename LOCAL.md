@@ -5,14 +5,15 @@
 
 ## From scratch (new laptop)
 
-**PowerShell as Administrator** (first time):
+`C:\ciam` is **created by git clone** — it is not a Windows default folder.
+
+**PowerShell as Administrator** (stay in `C:\` first):
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 cd C:\
-git clone https://github.com/jayaroobi/ciamdeveloper.git ciam
+irm https://raw.githubusercontent.com/jayaroobi/ciamdeveloper/cursor/forgeops-ciam-career-lab-fe67/forgeops/scripts/create-ciam-folder.ps1 | iex
 cd C:\ciam
-git checkout cursor/forgeops-ciam-career-lab-fe67
 .\forgeops\scripts\setup-from-scratch.ps1
 ```
 

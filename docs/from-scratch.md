@@ -6,9 +6,24 @@
 
 ## Quick start (copy-paste)
 
-### First time — run as Administrator
+`C:\ciam` **does not exist** on a new laptop. Create it first (stay in `C:\` — do not `cd C:\ciam` yet).
 
 Open **PowerShell as Administrator**:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+cd C:\
+irm https://raw.githubusercontent.com/jayaroobi/ciamdeveloper/cursor/forgeops-ciam-career-lab-fe67/forgeops/scripts/create-ciam-folder.ps1 | iex
+```
+
+That clones the repo and **creates** `C:\ciam`. Then:
+
+```powershell
+cd C:\ciam
+.\forgeops\scripts\setup-from-scratch.ps1
+```
+
+**Or all in one (clone + create folder):**
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
