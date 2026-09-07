@@ -56,11 +56,17 @@ function Get-WslText {
     }
     try {
         $p = Start-Process -FilePath $wslExe -ArgumentList @("-l","-v") `
-            -NoNewWindow -Wait -PassThru `
+            -NoNewWindow -PassThru `
             -RedirectStandardOutput $outFile `
             -RedirectStandardError $errFile `
             -ErrorAction SilentlyContinue
-        if ($p -and $p.HasExited) { $script:WslExit = $p.ExitCode } else { $script:WslExit = 1 }
+        if (-not $p) { return "not installed" }
+        if (-not $p.WaitForExit(12000)) {
+            try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch {}
+            $script:WslExit = 1
+            return "not installed"
+        }
+        $script:WslExit = $p.ExitCode
     } catch {
         $script:WslExit = 1
         return "not installed"
