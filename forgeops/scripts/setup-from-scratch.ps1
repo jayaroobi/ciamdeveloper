@@ -46,12 +46,25 @@ function Write-Check {
 }
 
 function Get-WslText {
-    $old = $ErrorActionPreference
-    $ErrorActionPreference = "SilentlyContinue"
-    $raw = wsl -l -v 2>&1 | Out-String
+    $script:WslExit = 1
+    $outFile = Join-Path $env:TEMP "ciam-wsl-list.txt"
+    cmd.exe /c "wsl.exe -l -v > `"$outFile`" 2>&1"
     $script:WslExit = $LASTEXITCODE
-    $ErrorActionPreference = $old
-    return ($raw -replace "`0", "")
+    $text = ""
+    if (Test-Path $outFile) {
+        try {
+            $bytes = [System.IO.File]::ReadAllBytes($outFile)
+            if ($bytes.Length -ge 2 -and $bytes[1] -eq 0) {
+                $text = [System.Text.Encoding]::Unicode.GetString($bytes)
+            } else {
+                $text = [System.IO.File]::ReadAllText($outFile)
+            }
+        } catch {
+            $text = Get-Content $outFile -Raw -ErrorAction SilentlyContinue
+        }
+    }
+    if (-not $text) { $text = "" }
+    return ($text -replace "`0", "")
 }
 
 function Ensure-HostsEntry {
@@ -291,7 +304,7 @@ function Invoke-Precheck {
 }
 
 Write-Host ""
-Write-Host "  ForgeRock AM + IDM - single setup" -ForegroundColor Cyan
+Write-Host "  ForgeRock AM + IDM - single setup (v2)" -ForegroundColor Cyan
 Write-Host "  =================================" -ForegroundColor Cyan
 Write-Host ("  Repo:  {0}" -f $RepoPath)
 Write-Host ("  AM:    https://{0}/am" -f $Fqdn)
