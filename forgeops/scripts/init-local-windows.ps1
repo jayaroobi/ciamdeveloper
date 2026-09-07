@@ -1,4 +1,4 @@
-# PowerShell — initialize local files for Windows (C:\ciam)
+# PowerShell - initialize local files for Windows (C:\ciam)
 # Run once after git clone:
 #   cd C:\ciam
 #   .\forgeops\scripts\init-local-windows.ps1
@@ -32,7 +32,7 @@ Write-Host "Updated forgeops/config/local-path.txt" -ForegroundColor Green
 
 # 3. Execution policy hint
 Write-Host ""
-Write-Host "Next steps (new laptop — AM + IDM via WSL2):" -ForegroundColor Cyan
+Write-Host "Next steps (new laptop - AM + IDM via WSL2):" -ForegroundColor Cyan
 Write-Host "  1. Install WSL2 Ubuntu + Docker Desktop (see docs/new-laptop-setup.md)"
 Write-Host "  2. Set-ExecutionPolicy -Scope CurrentUser RemoteSigned"
 Write-Host "  3. cd $RepoRoot"

@@ -1,10 +1,6 @@
-# ForgeRock AM + IDM — complete from-scratch setup (new Windows laptop)
+# ForgeRock AM + IDM - complete from-scratch setup (new Windows laptop)
 #
 # Run in PowerShell (Admin recommended for WSL install + hosts file):
-#   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-#   irm https://raw.githubusercontent.com/jayaroobi/ciamdeveloper/cursor/forgeops-ciam-career-lab-fe67/forgeops/scripts/setup-from-scratch.ps1 | iex
-#
-# Or after git clone:
 #   cd C:\ciam
 #   .\forgeops\scripts\setup-from-scratch.ps1
 
@@ -27,9 +23,10 @@ function Test-Admin {
     return $p.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-function Write-Step([string]$Num, [string]$Msg) {
+function Write-Step {
+    param([string]$Num, [string]$Msg)
     Write-Host ""
-    Write-Host "=== Step $Num — $Msg ===" -ForegroundColor Cyan
+    Write-Host ("=== Step {0} - {1} ===" -f $Num, $Msg) -ForegroundColor Cyan
 }
 
 function Ensure-HostsEntry {
@@ -64,22 +61,20 @@ function Start-DockerDesktop {
     return $false
 }
 
-Write-Host @"
-
-  ForgeRock AM + IDM — from scratch
-  =================================
-  Repo:  $RepoPath
-  AM:    https://$Fqdn/am
-  IDM:   https://$Fqdn/admin
-
-"@ -ForegroundColor Cyan
+Write-Host ""
+Write-Host "  ForgeRock AM + IDM - from scratch" -ForegroundColor Cyan
+Write-Host "  =================================" -ForegroundColor Cyan
+Write-Host ("  Repo:  {0}" -f $RepoPath) -ForegroundColor Cyan
+Write-Host ("  AM:    https://{0}/am" -f $Fqdn) -ForegroundColor Cyan
+Write-Host ("  IDM:   https://{0}/admin" -f $Fqdn) -ForegroundColor Cyan
+Write-Host ""
 
 if (-not $DeployOnly) {
 
-    Write-Step "0" "Check virtualization"
+    Write-Step -Num "0" -Msg "Check virtualization"
     Write-Host "If WSL/Docker fail later, enable Intel VT-x / AMD-V in BIOS and reboot."
 
-    Write-Step "1" "Git"
+    Write-Step -Num "1" -Msg "Git"
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
         if (Get-Command winget -ErrorAction SilentlyContinue) {
             Write-Host "Installing Git via winget..."
@@ -91,10 +86,10 @@ if (-not $DeployOnly) {
             exit 1
         }
     }
-    Write-Host "Git OK: $(git --version)" -ForegroundColor Green
+    Write-Host ("Git OK: {0}" -f (git --version)) -ForegroundColor Green
 
     if (-not $SkipPrereqs) {
-        Write-Step "2" "WSL2 + Ubuntu"
+        Write-Step -Num "2" -Msg "WSL2 + Ubuntu"
         $wslList = wsl -l -v 2>$null
         if ($LASTEXITCODE -ne 0 -or $wslList -notmatch $WslDistro) {
             if (-not (Test-Admin)) {
@@ -115,7 +110,7 @@ if (-not $DeployOnly) {
         Write-Host "WSL OK:" -ForegroundColor Green
         wsl -l -v
 
-        Write-Step "3" "Docker Desktop"
+        Write-Step -Num "3" -Msg "Docker Desktop"
         $dockerExe = "${env:ProgramFiles}\Docker\Docker\Docker Desktop.exe"
         if (-not (Test-Path $dockerExe)) {
             Write-Host "Docker Desktop not installed." -ForegroundColor Yellow
@@ -152,7 +147,7 @@ if (-not $DeployOnly) {
     }
 
     if (-not $SkipClone) {
-        Write-Step "4" "Clone lab repo"
+        Write-Step -Num "4" -Msg "Clone lab repo"
         if (-not (Test-Path "$RepoPath\.git")) {
             New-Item -ItemType Directory -Force -Path (Split-Path $RepoPath -Parent) | Out-Null
             git clone $RepoUrl $RepoPath
@@ -161,12 +156,12 @@ if (-not $DeployOnly) {
         git fetch origin
         git checkout $Branch
         git pull origin $Branch 2>$null
-        Write-Host "Repo at $RepoPath on branch $Branch" -ForegroundColor Green
+        Write-Host ("Repo at {0} on branch {1}" -f $RepoPath, $Branch) -ForegroundColor Green
     } else {
         Set-Location $RepoPath
     }
 
-    Write-Step "5" "Local config"
+    Write-Step -Num "5" -Msg "Local config"
     & "$RepoPath\forgeops\scripts\init-local-windows.ps1"
     Ensure-HostsEntry
 }
@@ -176,8 +171,8 @@ if (-not (Test-Path "$RepoPath\forgeops\scripts\setup-forgerock-wsl.ps1")) {
     exit 1
 }
 
-Write-Step "6" "Deploy Ping AM + IDM (45-60 min)"
-Write-Host "This runs inside WSL Ubuntu — not in PowerShell." -ForegroundColor Yellow
+Write-Step -Num "6" -Msg "Deploy Ping AM + IDM (45-60 min)"
+Write-Host "This runs inside WSL Ubuntu, not in PowerShell." -ForegroundColor Yellow
 Write-Host ""
 Write-Host "When prompted, open a SECOND Ubuntu window and run:" -ForegroundColor Yellow
 Write-Host "  sudo minikube tunnel" -ForegroundColor White
@@ -189,10 +184,10 @@ Set-Location $RepoPath
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "=== DONE ===" -ForegroundColor Green
-    Write-Host "Platform:  https://$Fqdn/platform"
-    Write-Host "AM:        https://$Fqdn/am"
-    Write-Host "IDM:       https://$Fqdn/admin"
-    Write-Host "Password:  see $RepoPath\forgeops\CREDENTIALS.local"
+    Write-Host ("Platform:  https://{0}/platform" -f $Fqdn)
+    Write-Host ("AM:        https://{0}/am" -f $Fqdn)
+    Write-Host ("IDM:       https://{0}/admin" -f $Fqdn)
+    Write-Host ("Password:  see {0}\forgeops\CREDENTIALS.local" -f $RepoPath)
     Write-Host ""
     Write-Host "Next: labs/week-02-saml-sso/README.md"
 }

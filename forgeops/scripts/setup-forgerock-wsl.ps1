@@ -59,14 +59,14 @@ $bash = @"
 set -euo pipefail
 cd '$WslRepo'
 if [[ ! -f README.md ]]; then
-  echo "Repo not found at $WslRepo — clone to $RepoPath first"
+  echo "Repo not found at $WslRepo - clone to $RepoPath first"
   exit 1
 fi
 sed -i 's/\r$//' forgeops/scripts/*.sh forgeops/config/env.local 2>/dev/null || true
 chmod +x forgeops/scripts/*.sh
 ./forgeops/scripts/check-cgroup.sh
 ./forgeops/scripts/install-prerequisites-ubuntu.sh
-# Docker Desktop: group may not apply — use sg or sudo-less docker if integration works
+# Docker Desktop: group may not apply - use sg or sudo-less docker if integration works
 if ! docker info >/dev/null 2>&1; then
   echo "Trying newgrp docker..."
   exec sg docker -c './forgeops/scripts/setup-forgerock.sh'
@@ -77,7 +77,7 @@ fi
 Write-Host ""
 Write-Host "Installing tools + deploying AM/IDM/DS (45-60 min)..." -ForegroundColor Cyan
 Write-Host ""
-Write-Host "!! OPEN SECOND UBUNTU WINDOW NOW — run before pressing Enter when asked:" -ForegroundColor Yellow
+Write-Host "!! OPEN SECOND UBUNTU WINDOW NOW - run before pressing Enter when asked:" -ForegroundColor Yellow
 Write-Host "     sudo minikube tunnel" -ForegroundColor White
 Write-Host ""
 
