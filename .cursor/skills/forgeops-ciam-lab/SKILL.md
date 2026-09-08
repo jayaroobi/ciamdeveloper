@@ -107,12 +107,14 @@ Apply these whenever the user is on the Windows laptop (`LAPTOP-4GLJMDEF`, repo 
 5. Windows hosts file: `127.0.0.1  forgeops.example.com`
 6. Open: https://forgeops.example.com/platform
 
-**PowerShell one-liner wrapper** (runs the same flow inside WSL):
+**PowerShell wrapper** (calls `setup-forgerock-in-wsl.sh` inside WSL). Do **not** embed bash in `@" "@` here-strings in `.ps1` files — Windows PowerShell 5.1 cannot parse them on LF files and errors with `Unexpected token 'Repo'`:
 
 ```powershell
 cd C:\ciam
 .\forgeops\scripts\setup-forgerock-wsl.ps1
 ```
+
+If that parse error appears, skip the wrapper and use the Ubuntu commands above. A `=== DONE ===` banner right after the error does **not** mean AM/IDM is up.
 
 ### WSL timeout (`HCS_E_CONNECTION_TIMEOUT`)
 
@@ -137,6 +139,7 @@ exit
 ### CRLF / env.local pitfalls
 
 - `env.local: line N: $'\r': command not found` → Windows CRLF. Fix: `sed -i 's/\r$//' forgeops/config/env.local forgeops/scripts/*.sh`
+- Never put bash in PowerShell `@" "@` here-strings. Windows PowerShell 5.1 cannot parse them on LF-ended `.ps1` files (`Unexpected token 'Repo'`). Call `setup-forgerock-in-wsl.sh` instead.
 - `env.local` must be **bash-safe** (use `forgeops/config/env.example` shape with `export ...`). Do **not** put `C:\ciam` Windows paths in a file sourced by bash.
 - `setup-forgerock.sh` sources env via `source <(sed 's/\r$//' ...)` to tolerate CRLF.
 - `init-local-windows.ps1` copies `env.example` → `env.local` (not the Windows-only template).
@@ -182,7 +185,8 @@ exit
 | `docs/forgeops-windows-setup.md` | Windows WSL2 (preferred) / Multipass ForgeOps deploy |
 | `LOCAL.md` | Short Windows cheat sheet for this laptop |
 | `forgeops/scripts/setup-forgerock.sh` | Main ForgeOps minikube deploy (run in WSL/Linux) |
-| `forgeops/scripts/setup-forgerock-wsl.ps1` | PowerShell → WSL wrapper for setup-forgerock |
+| `forgeops/scripts/setup-forgerock-in-wsl.sh` | WSL entrypoint called by the PowerShell wrapper |
+| `forgeops/scripts/setup-forgerock-wsl.ps1` | PowerShell → WSL wrapper (no bash here-strings) |
 | `forgeops/scripts/windows-forgerock.ps1` | Multipass fallback launcher |
 | `forgeops/scripts/init-local-windows.ps1` | Creates bash-safe env.local + local-path.txt |
 | `docs/forgeops-cloud-vm.md` | Cloud VM alternative when workspace is containerized |

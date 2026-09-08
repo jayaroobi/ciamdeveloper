@@ -457,15 +457,37 @@ Write-Host "  sudo minikube tunnel" -ForegroundColor White
 Write-Host ""
 
 Set-Location $RepoPath
-& "$RepoPath\forgeops\scripts\setup-forgerock-wsl.ps1" -WslDistro $WslDistro -RepoPath $RepoPath
+$deployExit = 1
+try {
+    & "$RepoPath\forgeops\scripts\setup-forgerock-wsl.ps1" -WslDistro $WslDistro -RepoPath $RepoPath
+    if (-not $?) {
+        $deployExit = 1
+    } elseif ($null -eq $LASTEXITCODE) {
+        $deployExit = 0
+    } else {
+        $deployExit = $LASTEXITCODE
+    }
+} catch {
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    $deployExit = 1
+}
 
-if ($LASTEXITCODE -eq 0) {
+if ($deployExit -eq 0) {
     Write-Host ""
     Write-Host "=== DONE ===" -ForegroundColor Green
     Write-Host ("Platform:  https://{0}/platform" -f $Fqdn)
     Write-Host ("AM:        https://{0}/am" -f $Fqdn)
     Write-Host ("IDM:       https://{0}/admin" -f $Fqdn)
     Write-Host ("Password:  see {0}\forgeops\CREDENTIALS.local" -f $RepoPath)
+    exit 0
 }
 
-exit $LASTEXITCODE
+Write-Host ""
+Write-Host "=== DEPLOY DID NOT FINISH ===" -ForegroundColor Red
+Write-Host "Ignore Platform/AM/IDM URLs until this step succeeds."
+Write-Host "Re-run: .\forgeops\scripts\setup-from-scratch.ps1 -DeployOnly"
+Write-Host "Or from Ubuntu (not PowerShell):"
+Write-Host "  wsl -d Ubuntu"
+Write-Host "  cd /mnt/c/ciam"
+Write-Host "  ./forgeops/scripts/setup-forgerock.sh"
+exit $deployExit

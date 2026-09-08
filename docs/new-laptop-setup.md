@@ -213,6 +213,8 @@ minikube stop
 | Forgot WSL password | PowerShell: `wsl -d Ubuntu -u root` then `passwd youruser` |
 | `chmod`/`sed` not recognized | You are in PowerShell — switch to Ubuntu |
 | `domain threaded` in WSL | Try Multipass — see `LOCAL.md` |
+| `Unexpected token 'Repo'` in setup-forgerock-wsl.ps1 | PowerShell 5.1 parse bug — use Option B (Ubuntu) in Step 4, then `git pull` and retry the wrapper |
+| `=== DONE ===` with no 45-min wait | Deploy did not run — use Option B in Ubuntu |
 | AM/IDM page won't load | Is `sudo minikube tunnel` running? Hosts file correct? |
 | Pods stuck Pending | `free -h` in WSL — need ~9 GB free; increase Docker memory |
 

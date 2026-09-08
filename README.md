@@ -133,6 +133,7 @@ Ping images/charts are pulled from Ping/ForgeRock registries during Helm/pod sta
 | Script | Purpose |
 |--------|---------|
 | `setup-forgerock.sh` | Full ForgeOps deploy (preferred) |
+| `setup-forgerock-in-wsl.sh` | WSL entrypoint called by the PowerShell wrapper |
 | `setup-forgerock-wsl.ps1` | PowerShell → runs setup inside WSL Ubuntu |
 | `windows-forgerock.ps1` | Multipass VM launcher (fallback) |
 | `init-local-windows.ps1` | Creates bash-safe `env.local` + `local-path.txt` |
