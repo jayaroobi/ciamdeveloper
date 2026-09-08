@@ -142,6 +142,8 @@ See [new-laptop-setup.md](new-laptop-setup.md) for full troubleshooting table.
 | Error | Fix |
 |-------|-----|
 | `chmod` not recognized | Use Ubuntu, not PowerShell |
+| `Unexpected token 'Repo'` | PowerShell 5.1 parse bug — `git pull` then retry, or run `./forgeops/scripts/setup-forgerock.sh` in Ubuntu |
+| `=== DONE ===` with no 45-min wait | Deploy did not run — use Ubuntu path |
 | Docker not in WSL | Docker Desktop → WSL Integration → Ubuntu ON |
 | WSL timeout | `wsl --shutdown`, restart Docker, `wsl -d Ubuntu` |
 | Page won't load | Is tunnel running? Hosts file set? |

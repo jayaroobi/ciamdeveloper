@@ -27,6 +27,8 @@ cd C:\ciam
 
 Second Ubuntu window when prompted: `sudo minikube tunnel`
 
+If PowerShell says `Unexpected token 'Repo'` or prints `=== DONE ===` immediately, **AM is not deployed**. Open **Ubuntu** (not PowerShell) and run the bash steps below.
+
 ## One-time init (if repo already cloned)
 
 ```powershell

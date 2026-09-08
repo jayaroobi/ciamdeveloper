@@ -91,17 +91,19 @@ if ($state -ne "Running") {
 Write-Host ""
 Write-Host "Deploying via git inside VM (mount not required)..." -ForegroundColor Cyan
 
-$SetupCmd = @"
-set -e
-if [ -d '$VM_REPO/.git' ]; then
-  cd '$VM_REPO' && git fetch origin && git checkout '$GIT_BRANCH' && git pull origin '$GIT_BRANCH'
-else
-  git clone '$REPO_URL' '$VM_REPO'
-  cd '$VM_REPO' && git checkout '$GIT_BRANCH'
-fi
-chmod +x forgeops/scripts/*.sh
-./forgeops/scripts/setup-forgerock.sh
-"@
+# Array join, not a here-string: Windows PowerShell 5.1 cannot parse @" "@
+# when this file has Unix (LF) line endings.
+$SetupCmd = @(
+    'set -e'
+    ('if [ -d ''{0}/.git'' ]; then' -f $VM_REPO)
+    ('  cd ''{0}'' && git fetch origin && git checkout ''{1}'' && git pull origin ''{1}''' -f $VM_REPO, $GIT_BRANCH)
+    'else'
+    ('  git clone ''{0}'' ''{1}''' -f $REPO_URL, $VM_REPO)
+    ('  cd ''{0}'' && git checkout ''{1}''' -f $VM_REPO, $GIT_BRANCH)
+    'fi'
+    'chmod +x forgeops/scripts/*.sh'
+    './forgeops/scripts/setup-forgerock.sh'
+) -join "`n"
 
 Write-Host "Starting ForgeRock deploy (45-60 min)..." -ForegroundColor Cyan
 Write-Host "When prompted, open a SECOND PowerShell window:" -ForegroundColor Yellow

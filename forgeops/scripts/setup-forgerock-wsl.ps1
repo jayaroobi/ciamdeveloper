@@ -2,6 +2,10 @@
 # Called by setup-from-scratch.ps1 or run directly:
 #   cd C:\ciam
 #   .\forgeops\scripts\setup-forgerock-wsl.ps1
+#
+# Do not use @" "@ here-strings in this file. Windows PowerShell 5.1
+# cannot parse them when the script has Unix (LF) line endings, and
+# fails with: Unexpected token 'Repo' in expression or statement.
 
 param(
     [string]$RepoPath = "C:\ciam",
@@ -55,24 +59,16 @@ if ($dockerCheck -notmatch "OK") {
 }
 Write-Host "Docker OK inside WSL" -ForegroundColor Green
 
-$bash = @"
-set -euo pipefail
-cd '$WslRepo'
-if [[ ! -f README.md ]]; then
-  echo "Repo not found at $WslRepo - clone to $RepoPath first"
-  exit 1
-fi
-sed -i 's/\r$//' forgeops/scripts/*.sh forgeops/config/env.local 2>/dev/null || true
-chmod +x forgeops/scripts/*.sh
-./forgeops/scripts/check-cgroup.sh
-./forgeops/scripts/install-prerequisites-ubuntu.sh
-# Docker Desktop: group may not apply - use sg or sudo-less docker if integration works
-if ! docker info >/dev/null 2>&1; then
-  echo "Trying newgrp docker..."
-  exec sg docker -c './forgeops/scripts/setup-forgerock.sh'
-fi
-./forgeops/scripts/setup-forgerock.sh
-"@
+$winScript = Join-Path $RepoPath "forgeops\scripts\setup-forgerock-in-wsl.sh"
+if (-not (Test-Path $winScript)) {
+    Write-Host "Missing forgeops\scripts\setup-forgerock-in-wsl.sh" -ForegroundColor Red
+    Write-Host "From Ubuntu run:"
+    Write-Host "  cd /mnt/c/ciam"
+    Write-Host "  ./forgeops/scripts/setup-forgerock.sh"
+    exit 1
+}
+
+$wslScript = $WslRepo + '/forgeops/scripts/setup-forgerock-in-wsl.sh'
 
 Write-Host ""
 Write-Host "Installing tools + deploying AM/IDM/DS (45-60 min)..." -ForegroundColor Cyan
@@ -81,5 +77,6 @@ Write-Host "!! OPEN SECOND UBUNTU WINDOW NOW - run before pressing Enter when as
 Write-Host "     sudo minikube tunnel" -ForegroundColor White
 Write-Host ""
 
-wsl -d $WslDistro -- bash -lc $bash
+# Call the bash file by path. Do not embed a bash script in this .ps1.
+wsl -d $WslDistro -- bash $wslScript
 exit $LASTEXITCODE
